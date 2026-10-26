@@ -9,8 +9,7 @@ import Footer from '../components/footer'
 import Sidebar from '../components/sidebar'
 import Main from '../components/main'
 import { getCurrentSource, github } from '../components/util'
-
-import sidebars from '../../meta/sidebars.json'
+import { uiCopy } from '../locales'
 
 export default function Docs({ pageContext, children }) {
     const {
@@ -26,10 +25,11 @@ export default function Docs({ pageContext, children }) {
         theme,
         version,
         apiDetails,
+        locale,
+        footer,
     } = pageContext
-    const sidebar = pageContext.sidebar
-        ? { items: pageContext.sidebar }
-        : sidebars.find((item) => item.section === section)
+    const ui = pageContext.ui || uiCopy(locale || 'zh-CN')
+    const sidebar = pageContext.sidebar ? { items: pageContext.sidebar } : null
     const pageMenu = menu ? menu.map(([text, id]) => ({ text, id })) : []
     const sourcePath = source ? github(source) : null
 
@@ -38,10 +38,10 @@ export default function Docs({ pageContext, children }) {
             <Grid cols={2}>
                 <div style={{ marginTop: 'var(--spacing-lg)' }}>
                     <Button to={getCurrentSource(slug, isIndex)} icon="code">
-                        建议修改
+                        {ui.suggestEdit}
                     </Button>
                 </div>
-                {next && <ReadNext title={next.title} to={next.slug} />}
+                {next && <ReadNext title={next.title} to={next.slug} label={ui.readNext} />}
             </Grid>
         </div>
     )
@@ -55,7 +55,8 @@ export default function Docs({ pageContext, children }) {
                 sidebar
                 asides
                 wrapContent
-                footer={<Footer />}
+                pagefindLang={locale}
+                footer={<Footer groups={footer} />}
             >
                 <Title
                     title={title}

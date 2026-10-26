@@ -1,0 +1,107 @@
+---
+title: Template overview
+teaser: Build a static documentation site with configurable Next.js, MDX, and Pagefind
+section: getting-started
+menu:
+  - ["What you get", "features"]
+  - ["Repository layout", "structure"]
+  - ["How the pieces connect", "configuration"]
+  - ["Suggested path", "workflow"]
+  - ["Next", "next"]
+---
+
+This is a reusable static documentation template. It fits product manuals, SDK
+references, and team guides where the content is the product. After you copy
+the repository, you build your site by editing JSON config and MDX. You do not
+need to understand all of the Next.js code first. Each language lives in
+`docs/<language>/`, and public URLs use the same prefix. Languages are listed
+in `locales` inside `website/meta/site.json`. There is no default language.
+
+## What you get {id="features"}
+
+The template already includes:
+
+- **Static export**: `npm run build` writes an `out/` directory you can host
+  anywhere.
+- **MDX documents**: write Markdown in `docs/<language>/` and embed the built-in
+  components.
+- **Multiple languages**: the header switches language. Search returns only the
+  current language.
+- **Responsive navigation**: the top navigation, sidebar, and footer come from
+  config.
+- **Local search**: the production build generates a Pagefind index that works
+  offline.
+- **Project-site hosting**: the included GitHub Actions workflow publishes a
+  normal repository to `https://<user>.github.io/<repository>/`.
+- **Example sidebar**: on a wide screen, short runnable examples sit to the
+  right of the paragraph. On a narrow screen they return to the reading flow.
+
+## Repository layout {id="structure"}
+
+Day to day, these directories matter. Documents are at the repository root. The
+site code is in `website/`:
+
+```text
+.
+├── docs/                         # MDX, one directory per language
+│   ├── zh-CN/                    # Chinese handbook
+│   │   ├── getting-started/
+│   │   ├── writing/
+│   │   └── publishing/
+│   └── en/                       # English handbook
+│       ├── getting-started/
+│       ├── writing/
+│       └── publishing/
+└── website/
+    ├── meta/
+    │   ├── site.json             # locales: title, navigation, and footer
+    │   ├── sidebars.json         # shared page order; urls have no language
+    │   └── type-annotations.json
+    ├── pages/
+    │   └── index.tsx             # language list
+    ├── public/                   # static files
+    └── src/                      # components, styles, and templates
+```
+
+Leave `src/` alone unless you are adding a component or changing the layout.
+
+## How the pieces connect {id="configuration"}
+
+Three places decide how a page appears:
+
+| Place                             | What it controls                                   |
+| --------------------------------- | -------------------------------------------------- |
+| `docs/<language>/<section>/*.mdx` | That language's content, title, teaser, and menu   |
+| `website/meta/site.json`          | Each language's title, top navigation, and footer  |
+| `website/meta/sidebars.json`      | Shared sidebar order. `url` has no language prefix |
+
+`section` is the key that connects them. `docs/en/writing/assets.mdx` sets
+`section: writing`. `locales.en.sections` and `sidebars.json` must also contain
+`writing`. The public URL is `/en/writing/assets`.
+
+The writing chapter starts with pages, components, and images. The later pages
+use a fictional product, Acme SDK, to stand in for your own product docs. You
+will add a `/en/guide` chapter for it and change the language-list branding.
+The publishing chapter then checks search and deployment. After that, replace
+the name and the prose with your product.
+
+## Suggested path {id="workflow"}
+
+The first time through, follow this order:
+
+1. Create your repository from the GitHub template and start it locally.
+2. Write the first MDX page in the quick start.
+3. In the writing chapter, learn pages, components, and images, then change the
+   site name, chapters, and home page.
+4. Run `npm run preview:search` and check search plus the static export.
+5. Push `main`. The included workflow deploys GitHub Pages.
+
+Run the tests and a production build after you add or remove a page. The tests
+check that config, routes, frontmatter, the sidebar, and the right-hand menu
+agree with each other.
+
+## Next {id="next"}
+
+Start with [Quick start](/en/getting-started/quickstart): create your
+repository and start the dev server. After the first page, continue with
+[Writing](/en/writing).

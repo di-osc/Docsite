@@ -1,0 +1,269 @@
+---
+title: Site configuration
+teaser: Add a chapter and use the same name in the config and the page
+section: writing
+menu:
+  - ["Config files", "locations"]
+  - ["Fields", "fields"]
+  - ["Add a language", "locales"]
+  - ["How the ids connect", "relationships"]
+  - ["Full example", "example"]
+  - ["Create the entry page", "documents"]
+  - ["Add a second page", "child-page"]
+  - ["Check the result", "verify"]
+---
+
+The previous pages covered pages, components, and images. This page changes
+the whole site: chapters, the top navigation, and the sidebar. The example is
+still the fictional Acme SDK, standing in for your own product docs.
+
+Keep this handbook, and add a Product guide chapter beside it. The config and
+the page must use the same chapter name or the site cannot connect them. You
+can run the tests and preview after every step. Delete template pages and
+their navigation only after your own content is in place.
+
+## Config files {id="locations"}
+
+Each file has one job:
+
+| File                                 | Role                                                           |
+| ------------------------------------ | -------------------------------------------------------------- |
+| `website/meta/site.json`             | Shared repo and theme color, plus each language in `locales`   |
+| `website/meta/sidebars.json`         | Shared chapters, groups, and page order. `url` has no language |
+| `website/meta/type-annotations.json` | Links an MDX type annotation to a reference page               |
+| `public/manifest.webmanifest`        | Name, display mode, and theme color when installed             |
+| `pages/index.tsx`                    | The language list at the site root                             |
+
+You will edit the first two JSON files most often. The type map is shown with
+a live result in
+[MDX components](/en/writing/mdx-components#type-annotations). The root path
+only lists languages. Brand text lives in that language's `locales` entry.
+
+## Fields {id="fields"}
+
+`website/meta/site.json` splits into fields shared by the whole site and one
+entry per language inside `locales`:
+
+| Field        | Role                                       | Example                  |
+| ------------ | ------------------------------------------ | ------------------------ |
+| `company`    | Organization name in the header and footer | `"Acme"`                 |
+| `companyUrl` | Footer link for the organization           | `"https://acme.example"` |
+| `repo`       | GitHub `owner/repo` used for source links  | `"acme/sdk-docs"`        |
+| `theme`      | Hex color for browser UI                   | `"#0a8f6a"`              |
+| `locales`    | One config per language, keyed by id       | `"zh-CN"`, `"en"`        |
+
+Inside each language:
+
+| Field         | Role                                                    |
+| ------------- | ------------------------------------------------------- |
+| `label`       | Name shown in the header language switcher              |
+| `lang`        | HTML language, such as `zh-CN` or `en`                  |
+| `title`       | Browser title for this language                         |
+| `description` | SEO summary for this language                           |
+| `slogan`      | Short line after the site name when a page has no title |
+| `sections`    | Chapter id, title, and theme. Ids match other languages |
+| `navigation`  | Header links. In-site URLs include the language prefix  |
+| `footer`      | Footer links. In-site URLs include the language prefix  |
+| `ui`          | Short strings for search, 404, suggest edit, and next   |
+
+There is no `defaultLocale`. A language id must not match a section id, or the
+first URL segment cannot tell them apart.
+
+`sections[].theme` and the root `theme` mean different things:
+
+```json
+{
+  "theme": "#0a8f6a",
+  "locales": {
+    "en": {
+      "sections": [
+        { "id": "guide", "title": "Product guide", "theme": "green" }
+      ]
+    }
+  }
+}
+```
+
+- The root `theme` is the color the browser uses.
+- `sections[].theme` is a built-in style name: `blue`, `green`, `purple`,
+  `nightly`, or `legacy`.
+
+## Add a language {id="locales"}
+
+A new language does not get its own copy of the sidebar. Every language shares
+`sidebars.json`.
+
+1. Create `docs/<language>/`, for example `docs/ja/`.
+2. Add the same id under `locales` in `site.json`. Give `sections` the same
+   chapter ids as the existing languages, and write `label`, `lang`, `title`,
+   `navigation`, and `footer` for this language.
+3. Place page files on paths that already exist in `sidebars.json`. The config
+   path `/getting-started` is `docs/ja/getting-started/index.mdx`, and the
+   public URL is `/ja/getting-started`.
+4. In-site URLs in `navigation` and `footer` include this language's prefix.
+   Do not add a prefix to `url` in `sidebars.json`.
+
+The sidebar label is that language's MDX `title`. A page that has not been
+written is omitted from that language's sidebar. The group title is that
+language's `sections[].title`. The header switcher opens the translation when
+it exists, and the first chapter of that language when it does not.
+
+The Chinese and English handbooks already follow the shared sidebar. To add
+another language, repeat the steps above and write that language's pages.
+
+## How the ids connect {id="relationships"}
+
+The same chapter id shows up in these places:
+
+```text
+docs/en/guide/index.mdx
+     └─ frontmatter: section: guide
+meta/site.json
+     └─ locales.en.sections[].id: guide
+meta/sidebars.json
+     └─ sidebars[].section: guide
+     └─ items[].url: /guide
+```
+
+The public URL is `/en/guide`. `navigation[].url` is `/en/guide`. The sidebar
+`url` stays `/guide`, without a language. Sidebar array order decides "Read
+next".
+
+<Infobox title="A new page is not a new chapter" variant="warning">
+
+Adding a page to an existing chapter only needs the MDX file and a sidebar
+item. A new chapter also needs that language's `sections`, `navigation`, the
+shared sidebar, and a directory under `docs/<language>/`.
+
+</Infobox>
+
+## Full example {id="example"}
+
+Append this to `locales.en.sections`:
+
+```json
+{ "id": "guide", "title": "Product guide", "theme": "green" }
+```
+
+Then append this to the same language's `navigation`. This URL includes the
+language:
+
+```json
+{ "text": "Product guide", "url": "/en/guide" }
+```
+
+Finally append a sidebar object to the outer array in
+`website/meta/sidebars.json`. The `url` has no language:
+
+```json
+{
+  "section": "guide",
+  "items": [
+    {
+      "label": "Start",
+      "items": [{ "text": "Guide overview", "url": "/guide" }]
+    }
+  ]
+}
+```
+
+The rendered group title comes from `sections[].title`, here "Product guide".
+`label` is only a placeholder in the config. Remember the comma after the
+previous array element. The existing handbook stays available, the header
+gains Product guide, and the page does not exist yet.
+
+## Create the entry page {id="documents"}
+
+Create `docs/en/guide/index.mdx`:
+
+```mdx
+---
+title: Guide overview
+teaser: From install to the first Acme SDK request
+section: guide
+menu:
+  - ["Next", "next"]
+---
+
+This page says what the guide covers and who it is for.
+
+## Next {id="next"}
+
+Continue to the install page.
+```
+
+Product guide in the header then opens `/en/guide`, and the sidebar shows
+Guide overview. If you write the config and skip the file, the tests report
+that the sidebar URL has no page.
+
+## Add a second page {id="child-page"}
+
+Once the entry page opens, use the method from
+[Add and organize pages](/en/writing#create-page) to add a second page. Create
+`docs/en/guide/installation.mdx`:
+
+````mdx
+---
+title: Install
+teaser: Install the Acme SDK and check the environment
+section: guide
+menu:
+  - ["Install the dependency", "install"]
+  - ["Check the install", "verify"]
+---
+
+## Install the dependency {id="install"}
+
+```bash
+npm install @acme/sdk
+```
+
+## Check the install {id="verify"}
+
+Run the project tests and confirm the SDK can be imported.
+````
+
+Then change only the `guide` group's `items`, and add Install after Guide
+overview. The `url` still has no language:
+
+```json
+{
+  "label": "Start",
+  "items": [
+    { "text": "Guide overview", "url": "/guide" },
+    { "text": "Install", "url": "/guide/installation" }
+  ]
+}
+```
+
+`/en/guide/installation` then opens. The sidebar lists Guide overview, then
+Install. The heading is Install, and the right side has "Install the
+dependency" and "Check the install".
+
+For a later chapter such as API, repeat the same four steps: add the section,
+add a prefixed header link, add an unprefixed sidebar object, and create the
+entry MDX under `docs/<language>/`. Do not delete the template handbook in one
+pass. After your pages cover what you need, remove the matching document
+directory, `sections`, `navigation`, and sidebar object together.
+
+## Check the result {id="verify"}
+
+From `website/`, run:
+
+```bash
+npm test -- --runInBand
+npm run build
+```
+
+You should see:
+
+- Tests do not report section, frontmatter, sidebar URL, or menu anchor
+  errors.
+- The build emits `/en/guide` and `/en/guide/installation`.
+- The header has Product guide, and the template handbook links still work.
+- Product guide uses the green theme. The sidebar lists Guide overview, then
+  Install.
+
+After the structure is in place, continue to
+[Appearance](/en/writing/appearance) and change the site name and theme color
+for the language.

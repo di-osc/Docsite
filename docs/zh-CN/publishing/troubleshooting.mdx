@@ -28,11 +28,11 @@ menu:
 重命名文件后，在仓库根目录用 `rg "/旧路径" docs website/meta website/pages` 搜索
 遗留链接。
 
-例如，`docs/guide/install.mdx` 能通过 `/guide/install` 打开，但左侧没有入口：
+例如，`docs/zh-CN/guide/install.mdx` 能通过 `/zh-CN/guide/install` 打开，但左侧没有入口：
 
 1. 确认页面 frontmatter 是 `section: guide`。
 2. 在 `website/meta/sidebars.json` 的 `guide` 分组中加入
-   `{ "text": "安装", "url": "/guide/install" }`。
+   `{ "text": "安装", "url": "/guide/install" }`。这里的 `url` 不写语言。
 3. 在 `website/` 目录运行 `npm test -- --runInBand`。
 
 测试通过并刷新页面后，左侧应出现“安装”；它所在的数组位置也会成为“上一篇/下一篇”
@@ -58,7 +58,7 @@ npm run preview:search
 
 一个常见误判是：在 `npm run dev` 中新增“AcmeClient”，搜索不到就认为索引损坏。正
 确做法是停止开发服务并运行 `npm run preview:search`；Pagefind 完成索引后再搜索
-“AcmeClient”，应命中 [MDX 组件](/writing/mdx-components#type-annotations)。
+“AcmeClient”，应命中 [MDX 组件](/zh-CN/writing/mdx-components#type-annotations)。
 
 ## GitHub Pages {id="github-pages"}
 

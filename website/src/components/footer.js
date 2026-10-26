@@ -6,12 +6,12 @@ import Grid from './grid'
 import classes from '../styles/footer.module.sass'
 import siteMetadata from '../../meta/site.json'
 
-export default function Footer({ wide = false }) {
-    const { companyUrl, company, footer } = siteMetadata
+export default function Footer({ wide = false, groups = [] }) {
+    const { companyUrl, company } = siteMetadata
     return (
         <footer className={classes.root}>
             <Grid cols={wide ? 3 : 2} narrow className={classes.content}>
-                {footer.map(({ label, items }) => (
+                {groups.map(({ label, items }) => (
                     <section key={label}>
                         <ul className={classes.column}>
                             <li className={classes.label}>{label}</li>
@@ -38,4 +38,5 @@ export default function Footer({ wide = false }) {
 
 Footer.propTypes = {
     wide: PropTypes.bool,
+    groups: PropTypes.array,
 }

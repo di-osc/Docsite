@@ -1,0 +1,263 @@
+---
+title: MDX components
+teaser: Use the built-in writing components, from source to the rendered result
+section: writing
+menu:
+  - ["How to use them", "principles"]
+  - ["Infobox", "infobox"]
+  - ["Button", "button"]
+  - ["Accordion", "accordion"]
+  - ["Grid", "grid"]
+  - ["Aside", "aside"]
+  - ["Tag", "tag"]
+  - ["Type annotations", "type-annotations"]
+  - ["Markdown", "markdown"]
+---
+
+The template registers the common writing components in the MDX runtime. In
+`docs/**/*.mdx` you can use the tags directly, without `import`. Each section
+below shows source you can copy, then the result on this page.
+
+## How to use them {id="principles"}
+
+MDX mixes Markdown and JSX. Keep paragraphs, lists, and tables as Markdown.
+Use a component for a callout, a disclosure, or a multi-column layout.
+
+```mdx
+A normal Markdown paragraph.
+
+<Infobox title="Note">
+
+The inside of a component can still be **Markdown**.
+
+</Infobox>
+```
+
+Leave a blank line between the opening tag, the body, and the closing tag so
+the inner Markdown is parsed. A boolean attribute can be shortened: `spaced`
+is the same as `spaced={true}`.
+
+## Infobox {id="infobox"}
+
+`Infobox` lifts a note, warning, or dangerous action out of the paragraph. Use
+the default style for extra information. Use `warning` or `danger` only when
+the reader must slow down.
+
+Source:
+
+```mdx
+<Infobox title="Config note" emoji="💡">
+
+After you change navigation, run the tests and confirm every link has a page.
+
+</Infobox>
+
+<Infobox title="Confirm before deleting" variant="danger">
+
+Handle the old URL before you delete a public page, or existing links break.
+
+</Infobox>
+```
+
+Result:
+
+<Infobox title="Config note" emoji="💡">
+
+After you change navigation, run the tests and confirm every link has a page.
+
+</Infobox>
+
+<Infobox title="Confirm before deleting" variant="danger">
+
+Handle the old URL before you delete a public page, or existing links break.
+
+</Infobox>
+
+| Prop      | Type / values                    | Default   | Meaning                        |
+| --------- | -------------------------------- | --------- | ------------------------------ |
+| `title`   | text or node                     | none      | Callout title                  |
+| `variant` | `default` / `warning` / `danger` | `default` | Meaning and visual style       |
+| `emoji`   | string                           | none      | Custom icon before the title   |
+| `id`      | string                           | none      | Lets a hash jump straight here |
+| `list`    | boolean                          | `false`   | Tighter style for list content |
+
+## Button {id="button"}
+
+`Button` highlights one clear next step. A normal reference inside a paragraph
+should stay a Markdown link, so not every link becomes a loud button.
+
+Source:
+
+```mdx
+<Button to="/en/getting-started/quickstart" variant="primary">
+  Get started
+</Button>
+```
+
+Result:
+
+<Button to="/en/getting-started/quickstart" variant="primary">
+  Get started
+</Button>
+
+| Prop      | Type / values                        | Default     | Meaning                  |
+| --------- | ------------------------------------ | ----------- | ------------------------ |
+| `to`      | string                               | none        | Internal or external URL |
+| `variant` | `primary` / `secondary` / `tertiary` | `secondary` | How strong the button is |
+| `large`   | boolean                              | `false`     | Use the large size       |
+| `icon`    | built-in icon name                   | none        | Icon before the label    |
+
+## Accordion {id="accordion"}
+
+`Accordion` hides optional detail, a long config, or a compatibility note. Do
+not hide a step the reader must complete.
+
+Source:
+
+```mdx
+<Accordion title="Full configuration" id="full-config" expanded={false} spaced>
+
+Put the full config here when it is not part of the main path.
+
+</Accordion>
+```
+
+Result:
+
+<Accordion title="Full configuration" id="full-config" expanded={false} spaced>
+
+Put the full config here when it is not part of the main path.
+
+</Accordion>
+
+| Prop       | Type    | Default | Meaning                     |
+| ---------- | ------- | ------- | --------------------------- |
+| `title`    | string  | none    | Collapsed title             |
+| `id`       | string  | none    | Anchor you can share        |
+| `expanded` | boolean | `false` | Whether it starts open      |
+| `spaced`   | boolean | `false` | Extra space above and below |
+
+## Grid {id="grid"}
+
+`Grid` lays out sibling entries in columns and wraps them on a narrow screen.
+It only handles layout. Put a `Button`, a card, or a short block inside it.
+
+Source:
+
+```mdx
+<Grid cols={2}>
+  <Button to="/en/getting-started">Overview</Button>
+  <Button to="/en/publishing">Local search</Button>
+</Grid>
+```
+
+Result:
+
+<Grid cols={2}>
+  <Button to="/en/getting-started">Overview</Button>
+  <Button to="/en/publishing">Local search</Button>
+</Grid>
+
+| Prop           | Type                  | Default | Meaning                  |
+| -------------- | --------------------- | ------- | ------------------------ |
+| `cols`         | `1` / `2` / `3` / `4` | `1`     | Columns on a wide screen |
+| `narrow`       | boolean               | `false` | Use a narrower measure   |
+| `gutterBottom` | boolean               | `true`  | Keep space below         |
+
+## Aside {id="aside"}
+
+`Aside` puts a short example that belongs to the current section on the right.
+On a wide screen it sits beside the text. On a narrow screen it returns to the
+reading flow. Long tutorials and required steps stay in the body.
+
+Source:
+
+````mdx
+<Aside title="Example">
+
+```bash
+npm install
+npm run dev
+```
+
+</Aside>
+````
+
+Result (EXAMPLE on the right):
+
+<Aside title="Example">
+
+```bash
+npm install
+npm run dev
+```
+
+</Aside>
+
+Write `Aside` inside the related `##` section. Outside that section, its
+vertical position may not line up with the paragraph.
+
+## Tag {id="tag"}
+
+`Tag` is a short status, version, or category. It is not a place for a full
+sentence.
+
+Source:
+
+```mdx
+Current version <Tag variant="new" tooltip="Local search shipped in this version">1.0</Tag>
+```
+
+Result:
+
+Current version <Tag variant="new" tooltip="Local search shipped in this version">1.0</Tag>
+
+| Prop      | Type / values   | Default | Meaning                   |
+| --------- | --------------- | ------- | ------------------------- |
+| `variant` | `new` / `model` | none    | Version or model styling  |
+| `tooltip` | string          | none    | Text on hover or focus    |
+| `spaced`  | boolean         | `false` | Extra space on both sides |
+
+## Type annotations {id="type-annotations"}
+
+Double tildes render an inline type annotation, not strikethrough. When the
+type name is listed in `website/meta/type-annotations.json`, it also links to
+the reference page. The stored URL includes a language prefix. On this English
+page the link stays in English.
+
+The example uses a type name from the fictional Acme SDK. `AcmeClient` is the
+client type in that example. It shows how the annotation links to a reference.
+
+Source:
+
+```md
+`createClient()` returns ~~AcmeClient~~.
+```
+
+Result:
+
+`createClient()` returns ~~AcmeClient~~.
+
+The mapping:
+
+```json
+{
+  "AcmeClient": "/zh-CN/writing/mdx-components#type-annotations"
+}
+```
+
+A type with no mapping still uses the type style, without a link. Do not use
+double tildes for ordinary deleted text, or it will look like a type.
+
+## Markdown {id="markdown"}
+
+Ordinary Markdown picks up the template styles: tables, lists, quotes, images,
+links, code blocks, and heading anchors. Label the language of a code block,
+for example:
+
+```python
+client = create_client()
+```
+
+The page shows that Python block above. Images and links are covered in
+[Images and links](/en/writing/assets). Later pages keep this pattern.

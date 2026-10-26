@@ -93,7 +93,7 @@ export const createPagefindClient = (
     }
 
     return {
-        async search(query) {
+        async search(query, filters) {
             const normalizedQuery = query.trim()
 
             if (!normalizedQuery) {
@@ -101,7 +101,10 @@ export const createPagefindClient = (
             }
 
             const pagefind = await getPagefind()
-            const response = await pagefind.search(normalizedQuery)
+            // filters 例如 { lang: 'zh-CN' }，对应正文上的 data-pagefind-filter。
+            const response = filters
+                ? await pagefind.search(normalizedQuery, { filters })
+                : await pagefind.search(normalizedQuery)
             const pages = await Promise.all(response.results.map(result => result.data()))
 
             return response.results.flatMap((result, index) => normalizeResult(result, pages[index]))

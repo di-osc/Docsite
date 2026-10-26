@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 import classes from '../styles/dropdown.module.sass'
 
-export default function Dropdown({ defaultValue, className, onChange, children }) {
+export default function Dropdown({ defaultValue, className, onChange, children, ...rest }) {
     const router = useRouter()
     const defaultOnChange = ({ target }) => {
         const isExternal = /((http(s?)):\/\/|mailto:)/gi.test(target.value)
@@ -20,6 +20,7 @@ export default function Dropdown({ defaultValue, className, onChange, children }
             defaultValue={defaultValue}
             className={classNames(classes.root, className)}
             onChange={onChange || defaultOnChange}
+            {...rest}
         >
             {children}
         </select>
@@ -31,4 +32,5 @@ Dropdown.propTypes = {
     className: PropTypes.string,
     onChange: PropTypes.func,
     children: PropTypes.node.isRequired,
+    'aria-label': PropTypes.string,
 }

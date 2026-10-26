@@ -21,6 +21,7 @@ export default function Main({
     wrapContent = false,
     theme,
     footer,
+    pagefindLang,
     children,
 }) {
     const pattern = patterns[theme ?? 'blue']
@@ -28,11 +29,17 @@ export default function Main({
         [classes['with-sidebar']]: sidebar,
         [classes['with-asides']]: asides,
     })
+    // Pagefind 用这个属性把正文划进当前语言，搜索时只返回这一语言。
+    const pagefindProps = { 'data-pagefind-body': '' }
+
+    if (pagefindLang) {
+        pagefindProps['data-pagefind-filter'] = `lang:${pagefindLang}`
+    }
 
     return (
         <main className={mainClassNames}>
             {wrapContent ? (
-                <Content Component="article" data-pagefind-body="">
+                <Content Component="article" {...pagefindProps}>
                     {children}
                 </Content>
             ) : (
@@ -52,4 +59,5 @@ Main.propTypes = {
     wrapContent: PropTypes.bool,
     theme: PropTypes.string,
     footer: PropTypes.node,
+    pagefindLang: PropTypes.string,
 }

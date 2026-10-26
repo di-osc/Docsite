@@ -6,14 +6,16 @@ import Link from './link'
 import Dropdown from './dropdown'
 import classes from '../styles/navigation.module.sass'
 import siteMetadata from '../../meta/site.json'
-
-const isSectionActive = (url, section) =>
-    Boolean(section) && (url === `/${section}` || url.startsWith(`/${section}/`))
+import { isSectionActive } from '../locales'
 
 const NavigationDropdown = ({ items = [], section }) => {
     const active = items.find(({ url }) => isSectionActive(url, section))
     return (
-        <Dropdown defaultValue={active?.url || 'title'} className={classes.dropdown}>
+        <Dropdown
+            key={active?.url || 'title'}
+            defaultValue={active?.url || 'title'}
+            className={classes.dropdown}
+        >
             <option value="title" disabled>
                 Docs
             </option>
@@ -26,7 +28,31 @@ const NavigationDropdown = ({ items = [], section }) => {
     )
 }
 
-export default function Navigation({ title, items = [], section, children }) {
+const LanguageDropdown = ({ languages }) => {
+    const current = languages.find((language) => language.current)
+
+    return (
+        <Dropdown
+            key={current?.id || 'language'}
+            defaultValue={current?.href || 'language'}
+            className={classes['language-dropdown']}
+            aria-label="Language"
+        >
+            {!current && (
+                <option value="language" disabled>
+                    Language
+                </option>
+            )}
+            {languages.map(({ id, label, lang, href }) => (
+                <option key={id} value={href} lang={lang}>
+                    {label}
+                </option>
+            ))}
+        </Dropdown>
+    )
+}
+
+export default function Navigation({ title, items = [], section, languages = [], children }) {
     return (
         <nav className={classes.root}>
             <Link to="/" aria-label={title} noLinkLayout>
@@ -56,6 +82,7 @@ export default function Navigation({ title, items = [], section, children }) {
                     })}
                 </ul>
             </div>
+            {languages.length > 0 && <LanguageDropdown languages={languages} />}
             {children}
         </nav>
     )
@@ -65,5 +92,14 @@ Navigation.propTypes = {
     title: PropTypes.string.isRequired,
     items: PropTypes.array,
     section: PropTypes.string,
+    languages: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            label: PropTypes.string.isRequired,
+            lang: PropTypes.string,
+            href: PropTypes.string.isRequired,
+            current: PropTypes.bool,
+        })
+    ),
     children: PropTypes.node,
 }

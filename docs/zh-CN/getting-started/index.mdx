@@ -12,15 +12,16 @@ menu:
 
 这是一个可复用的静态文档站模板。它适合产品手册、SDK 文档、团队规范等以内容为
 主的站点。复制仓库后，主要通过修改 JSON 配置和 MDX 文档，就能建立自己的文档站，
-不需要先理解全部 Next.js 代码。页面语言写在 `website/meta/site.json` 的 `lang`
-中，并与正文保持一致。
+不需要先理解全部 Next.js 代码。每种语言的正文放在 `docs/<语言>/`，公开地址带同样
+的前缀。语言写在 `website/meta/site.json` 的 `locales` 里，没有单独的默认语言。
 
 ## 模板能力 {id="features"}
 
 模板已经内置这些能力：
 
 - **静态导出**：`npm run build` 生成可部署到任意静态托管的 `out/` 目录。
-- **MDX 文档**：在 `docs/` 中用 Markdown 编写内容，并嵌入现成组件。
+- **MDX 文档**：在 `docs/<语言>/` 中用 Markdown 编写内容，并嵌入现成组件。
+- **多语言**：页头可以切换语言。搜索只返回当前语言的页面。
 - **响应式导航**：顶部导航、左侧边栏和页脚都由配置驱动。
 - **本地搜索**：生产构建会生成 Pagefind 索引，支持离线检索。
 - **项目路径部署**：内置 GitHub Actions，普通仓库可直接发布到
@@ -34,17 +35,22 @@ menu:
 
 ```text
 .
-├── docs/                         # MDX 文档内容
-│   ├── getting-started/          # 入门
-│   ├── writing/                  # 编写
-│   └── publishing/               # 发布
+├── docs/                         # 按语言分目录的 MDX
+│   ├── zh-CN/                    # 中文手册
+│   │   ├── getting-started/
+│   │   ├── writing/
+│   │   └── publishing/
+│   └── en/                       # 英文手册
+│       ├── getting-started/
+│       ├── writing/
+│       └── publishing/
 └── website/
     ├── meta/
-    │   ├── site.json             # 站点名称、导航、页脚
-    │   ├── sidebars.json         # 分区、分组与页面顺序
+    │   ├── site.json             # locales：每种语言的名称、导航和页脚
+    │   ├── sidebars.json         # 所有语言共用的页面顺序，url 不带语言
     │   └── type-annotations.json
     ├── pages/
-    │   └── index.tsx             # 首页
+    │   └── index.tsx             # 语言列表
     ├── public/                   # 静态资源
     └── src/                      # 站点组件、样式与模板逻辑
 ```
@@ -55,19 +61,19 @@ menu:
 
 三个位置共同决定一篇文档如何出现：
 
-| 位置                         | 决定什么                       |
-| ---------------------------- | ------------------------------ |
-| `docs/<section>/*.mdx`       | 页面内容、标题、摘要和右侧目录 |
-| `website/meta/site.json`     | 顶部大章节、站点身份和页脚     |
-| `website/meta/sidebars.json` | 左侧小章节、分组和“下一篇”顺序 |
+| 位置                          | 决定什么                               |
+| ----------------------------- | -------------------------------------- |
+| `docs/<语言>/<section>/*.mdx` | 该语言的页面内容、标题、摘要和右侧目录 |
+| `website/meta/site.json`      | 每种语言的标题、顶部导航和页脚         |
+| `website/meta/sidebars.json`  | 所有语言共用的左侧顺序，`url` 不带语言 |
 
-`section` 是它们之间的连接键。例如 `docs/writing/assets.mdx` 的 frontmatter 使用
-`section: writing`，`site.json.sections` 和 `sidebars.json` 中也都要存在
-`writing`。
+`section` 是它们之间的连接键。例如 `docs/zh-CN/writing/assets.mdx` 的 frontmatter 使用
+`section: writing`。`locales.zh-CN.sections` 和 `sidebars.json` 里也都要有
+`writing`。公开地址是 `/zh-CN/writing/assets`。
 
 编写章先讲怎么写页面。后半用一个虚构产品来演示整站配置，名字叫 Acme SDK，用来代
-表你自己的产品文档。你会为它增加 `/guide` 大章节，并修改首页外观。发布章再验证搜
-索并部署。走完后，把名称和正文换成自己的产品。
+表你自己的产品文档。你会为它增加 `/zh-CN/guide` 大章节，并修改语言列表页的品牌信息。
+发布章再验证搜索并部署。走完后，把名称和正文换成自己的产品。
 
 ## 推荐使用流程 {id="workflow"}
 
@@ -84,5 +90,5 @@ menu:
 
 ## 下一步 {id="next"}
 
-从 [快速开始](/getting-started/quickstart) 创建自己的仓库并启动开发服务器。写完
-第一篇后，继续看 [编写](/writing)。
+从 [快速开始](/zh-CN/getting-started/quickstart) 创建自己的仓库并启动开发服务器。写完
+第一篇后，继续看 [编写](/zh-CN/writing)。

@@ -15,12 +15,12 @@ menu:
 
 ## 站点身份 {id="identity"}
 
-| 位置                          | 需要替换的内容                             |
-| ----------------------------- | ------------------------------------------ |
-| `meta/site.json`              | 标题、说明、组织、仓库、主题色、导航和页脚 |
-| `public/manifest.webmanifest` | `name`、`short_name`、`theme_color`        |
-| `pages/index.tsx`             | 首页标题、说明、卡片文案和入口             |
-| `README.md`                   | 仓库对外介绍和示例地址                     |
+| 位置                          | 需要替换的内容                                     |
+| ----------------------------- | -------------------------------------------------- |
+| `meta/site.json`              | 组织、仓库、主题色，以及每种语言的标题、导航和页脚 |
+| `public/manifest.webmanifest` | `name`、`short_name`、`theme_color`                |
+| `pages/index.tsx`             | 根路径只列出语言，通常不用改成某一种语言的落地页   |
+| `README.md`                   | 仓库对外介绍和示例地址                             |
 
 <Infobox title="先搜索占位符">
 
@@ -38,19 +38,24 @@ rg 'Documentation Template|Docs Template|Your Organization|your-org|example\.com
 
 ```json
 {
-  "title": "Acme SDK",
-  "lang": "en",
-  "description": "Documentation for the Acme SDK.",
-  "slogan": "Build with Acme",
   "company": "Acme",
   "companyUrl": "https://acme.example",
   "repo": "acme/sdk-docs",
-  "theme": "#0a8f6a"
+  "theme": "#0a8f6a",
+  "locales": {
+    "zh-CN": {
+      "label": "中文",
+      "lang": "zh-CN",
+      "title": "Acme SDK",
+      "description": "Acme SDK 文档",
+      "slogan": "用 Acme 构建"
+    }
+  }
 }
 ```
 
-这里只展示需要替换的字段，不要删除同一文件中的 `sections`、`navigation` 和
-`footer`。预期浏览器标题、左上角名称、源码链接和页脚组织信息一起更新。
+这里只展示需要替换的字段。不要删除该语言里的 `sections`、`navigation`、`footer`
+和 `ui`。预期浏览器标题、左上角名称、源码链接和页脚组织信息一起更新。
 
 再把 `public/manifest.webmanifest` 完整替换为：
 
@@ -72,31 +77,18 @@ rg 'Documentation Template|Docs Template|Your Organization|your-org|example\.com
 
 ## 首页内容 {id="homepage"}
 
-首页位于 `pages/index.tsx`。`LandingTitle` 是主标题，`LandingSubtitle` 是一句话
-说明，`LandingCard` 用于放置最重要的入口。下面的完整代码可以替换原有
-`<LandingGrid blocks>...</LandingGrid>`：
+`pages/index.tsx` 是根路径 `/`。它列出 `locales` 里的语言，每张卡片进入该语言的
+第一章。这里不是中文文档的首页，也不要改成只服务一种语言的落地页。
 
-```tsx
-<LandingGrid blocks>
-  <LandingCard title="快速开始" url="/guide" button="开始使用">
-    五分钟完成安装和第一个请求。
-  </LandingCard>
-  <LandingCard title="API 参考" url="/api" button="查看接口">
-    查找公开类型、参数和返回值。
-  </LandingCard>
-</LandingGrid>
-```
-
-入口卡片应指向真实页面。首页适合回答“这是什么、能做什么、下一步去哪”，详细操作步
-骤放到文档页，避免首页变成长手册。保存后，首页应出现两张并排卡片，窄屏时自动改为
-纵向排列。
+每种语言的标题和说明写在 `locales.<语言>.title` 与 `description`。读者进入
+`/zh-CN/getting-started` 之后，右上角才是这一语言的章节导航。
 
 `LandingCard` 是首页组件，不能直接写在 MDX 文档中。文档作者可用的组件及实时效果
-集中在 [MDX 组件](/writing/mdx-components)。
+集中在 [MDX 组件](/zh-CN/writing/mdx-components)。
 
 ## 章节主题 {id="themes"}
 
-在 `meta/site.json` 的 `sections[].theme` 中选择页面主题：
+在该语言的 `locales.<语言>.sections[].theme` 中选择页面主题：
 
 | 名称      | 适合用途             |
 | --------- | -------------------- |
@@ -118,7 +110,7 @@ rg 'Documentation Template|Docs Template|Your Organization|your-org|example\.com
 { "id": "guide", "title": "产品指南", "theme": "green" }
 ```
 
-保存后进入 `/guide`，章节强调色应变为绿色；其他章节仍使用各自的 theme。
+保存后进入 `/zh-CN/guide`，章节强调色应变为绿色；其他章节仍使用各自的 theme。
 
 ## 字体与图标 {id="assets"}
 
@@ -126,7 +118,7 @@ rg 'Documentation Template|Docs Template|Your Organization|your-org|example\.com
 - 站点静态图片放入 `public/`，例如 `public/images/logo.svg`。
 - manifest 图标需要在 `public/manifest.webmanifest` 的 `icons` 数组中声明；模板
   默认只提供基础 manifest，没有预置应用图标。
-- 图片引用规则和 GitHub Pages 子路径处理见 [图片与链接](/writing/assets)。
+- 图片引用规则和 GitHub Pages 子路径处理见 [图片与链接](/zh-CN/writing/assets)。
 
 新增应用图标时，可将 `public/icons/icon-192.png` 放入仓库，再在 manifest 中增加
 ：
@@ -154,4 +146,4 @@ rg 'Documentation Template|Docs Template|Your Organization|your-org|example\.com
 侧栏。最后运行 `npm test -- --runInBand` 和 `npm run build`；二者都成功才说明品
 牌配置没有破坏导航或静态导出。
 
-外观改完后，继续 [本地搜索](/publishing)，确认读者能找到这些页面。
+外观改完后，继续 [本地搜索](/zh-CN/publishing)，确认读者能找到这些页面。

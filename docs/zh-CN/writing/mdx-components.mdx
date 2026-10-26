@@ -86,14 +86,14 @@ MDX 是 Markdown 与 JSX 的组合：普通段落、列表、表格继续使用 
 源码：
 
 ```mdx
-<Button to="/getting-started/quickstart" variant="primary">
+<Button to="/zh-CN/getting-started/quickstart" variant="primary">
   开始使用
 </Button>
 ```
 
 实际效果：
 
-<Button to="/getting-started/quickstart" variant="primary">
+<Button to="/zh-CN/getting-started/quickstart" variant="primary">
   开始使用
 </Button>
 
@@ -143,16 +143,16 @@ MDX 是 Markdown 与 JSX 的组合：普通段落、列表、表格继续使用 
 
 ```mdx
 <Grid cols={2}>
-  <Button to="/getting-started">模板概览</Button>
-  <Button to="/publishing">本地搜索</Button>
+  <Button to="/zh-CN/getting-started">模板概览</Button>
+  <Button to="/zh-CN/publishing">本地搜索</Button>
 </Grid>
 ```
 
 实际效果：
 
 <Grid cols={2}>
-  <Button to="/getting-started">模板概览</Button>
-  <Button to="/publishing">本地搜索</Button>
+  <Button to="/zh-CN/getting-started">模板概览</Button>
+  <Button to="/zh-CN/publishing">本地搜索</Button>
 </Grid>
 
 | 属性           | 类型                  | 默认值  | 说明             |
@@ -234,10 +234,11 @@ npm run dev
 
 ```json
 {
-  "AcmeClient": "/writing/mdx-components#type-annotations"
+  "AcmeClient": "/zh-CN/writing/mdx-components#type-annotations"
 }
 ```
 
+地址里的语言前缀会按当前页面换成正在阅读的语言，所以英文页会打开英文参考页。
 没有映射的类型仍会显示为类型样式，只是不带链接。普通删除内容不要使用双波浪线，以
 免被误认为类型标注。
 
@@ -251,4 +252,4 @@ client = create_client()
 ```
 
 页面效果就是上方已经渲染的 Python 代码块。图片和链接的完整示例见
-[图片与链接](/writing/assets)，下一章会继续沿用这里的写法。
+[图片与链接](/zh-CN/writing/assets)，下一章会继续沿用这里的写法。

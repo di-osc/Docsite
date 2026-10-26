@@ -1,0 +1,114 @@
+---
+title: Quick start
+teaser: Install dependencies and open your first documentation site
+section: getting-started
+menu:
+  - ["Requirements", "requirements"]
+  - ["Create a repository", "create"]
+  - ["Run it locally", "local"]
+  - ["Write the first page", "first-page"]
+---
+
+The steps below give you an editable documentation site in a few minutes.
+
+## Requirements {id="requirements"}
+
+- Node.js 24 (`website/.nvmrc`; run `nvm use` after you enter that directory)
+- Git
+- npm (installed with Node.js)
+
+Check the versions first:
+
+```bash
+node --version
+npm --version
+git --version
+```
+
+`node --version` should start with `v24.`. The other two commands should print
+a version. If you do not use `nvm`, install the Node.js version listed in
+`website/.nvmrc`.
+
+## Create a repository {id="create"}
+
+1. Open the template repository and choose **Use this template → Create a new
+   repository**.
+2. Pick an owner and a name. The repository can be public if you plan to use
+   GitHub Pages.
+3. After it is created, copy the new repository's Git URL.
+
+If the GitHub page has no **Use this template** button, the source repository
+is not marked as a template. You can still fork it, or download the code and
+push it to an empty repository.
+
+```bash
+git clone https://github.com/your-org/your-docs.git
+cd your-docs
+```
+
+## Run it locally {id="local"}
+
+Install dependencies and start the dev server from `website/`:
+
+```bash
+cd website
+nvm use
+npm install
+npm run dev
+```
+
+When the terminal says it is ready, open
+[`http://localhost:3000`](http://localhost:3000). You should see the language
+list, and from an English page the header should offer Getting started,
+Writing, and Publishing.
+
+In another terminal, run:
+
+```bash
+npm test -- --runInBand
+```
+
+All tests passing means the documents, config, and navigation agree before you
+change them. Run the same command again after each chapter.
+
+The dev server is for writing. It does not build the Pagefind index. When you
+want to check search, use the preview command on
+[Local search](/en/publishing).
+
+## Write the first page {id="first-page"}
+
+The header already has Getting started, Writing, and Publishing. This step
+adds one page to the Getting started chapter you just opened.
+
+From the repository root, create `docs/en/getting-started/hello.mdx`.
+`getting-started` is the directory for this chapter. The file name `hello`
+becomes the last part of the URL.
+
+```mdx
+---
+title: Hello
+teaser: My first document
+section: getting-started
+---
+
+Write the body in Markdown.
+```
+
+The lines between the two `---` markers are frontmatter. The site uses them to
+render the page. They do not appear in the body:
+
+- `title`: the page heading. After you open the page, the top should say
+  "Hello".
+- `teaser`: the one-line summary under the title, here "My first document".
+- `section`: which chapter this page belongs to. `getting-started` is the
+  directory name, and it is this chapter.
+
+Save the file and open
+[`http://localhost:3000/en/getting-started/hello`](http://localhost:3000/en/getting-started/hello).
+The heading is "Hello", and the line under it is "My first document".
+
+You have added your first document.
+
+The sidebar, components, and images are in [Writing](/en/writing). The site
+name, new chapters, and the look of the home page are later in that same
+chapter.

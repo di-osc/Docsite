@@ -14,20 +14,43 @@ const resolveRepoPath = (relativePath) =>
 const read = (relativePath) => fs.readFileSync(resolveRepoPath(relativePath), 'utf8')
 const readJson = (relativePath) => JSON.parse(read(relativePath))
 
-const documentationPages = fs
-    .readdirSync(path.join(repoRoot, 'docs'), { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && entry.name !== 'superpowers')
-    .flatMap((entry) =>
-        fs
-            .readdirSync(path.join(repoRoot, 'docs', entry.name))
-            .filter((file) => file.endsWith('.mdx'))
-            .map((file) => `docs/${entry.name}/${file}`)
-    )
-    .sort()
+/**
+ * 收集 docs/<语言>/ 下的 MDX。第一级是语言，章节在下一级。
+ */
+const collectDocuments = (directory, relative = 'docs') =>
+    fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+        if (entry.name === 'superpowers') {
+            return []
+        }
 
+        const next = path.join(directory, entry.name)
+        const nextRelative = `${relative}/${entry.name}`
+
+        if (entry.isDirectory()) {
+            return collectDocuments(next, nextRelative)
+        }
+
+        return entry.name.endsWith('.mdx') ? [nextRelative] : []
+    })
+
+const documentationPages = collectDocuments(path.join(repoRoot, 'docs')).sort()
+
+/**
+ * 公开地址始终带语言前缀。index.mdx 对应该目录，其余文件名成为最后一段。
+ */
 const routeForDocument = (file) => {
-    const [, section, filename] = file.match(/^docs\/([^/]+)\/([^/]+)\.mdx$/)
-    return filename === 'index' ? `/${section}` : `/${section}/${filename}`
+    const [, locale, rest] = file.match(/^docs\/([^/]+)\/(.+)\.mdx$/)
+    const pagePath = rest.endsWith('/index') ? rest.slice(0, -'/index'.length) : rest
+
+    return `/${locale}/${pagePath}`
+}
+
+/** 侧边栏配置不带语言，只保留章节和页面路径。 */
+const sidebarPathForDocument = (file) => {
+    const route = routeForDocument(file)
+    const [, , ...rest] = route.split('/')
+
+    return `/${rest.join('/')}`
 }
 
 const frontmatterForDocument = (file) => {
@@ -57,15 +80,24 @@ const sectionByAnchor = (content, anchor) =>
     )?.[1] ?? ''
 
 describe('documentation template content', () => {
-    test('keeps site sections, top navigation, and sidebars connected', () => {
+    test('keeps locales, top navigation, and the shared sidebar connected', () => {
         const site = readJson('meta/site.json')
         const sidebars = readJson('meta/sidebars.json')
-        const sectionIds = site.sections.map((section) => section.id)
+        const sectionIds = sidebars.map((sidebar) => sidebar.section)
 
+        expect(site.defaultLocale).toBeUndefined()
+        expect(Object.keys(site.locales).length).toBeGreaterThan(1)
         expect(new Set(sectionIds).size).toBe(sectionIds.length)
-        expect(sidebars.map((sidebar) => sidebar.section).sort()).toEqual([...sectionIds].sort())
-        for (const item of site.navigation.filter((item) => item.url.startsWith('/'))) {
-            expect(sectionIds).toContain(item.url.split('/')[1])
+
+        for (const [locale, config] of Object.entries(site.locales)) {
+            const localeSectionIds = config.sections.map((section) => section.id)
+
+            expect(localeSectionIds.sort()).toEqual([...sectionIds].sort())
+            expect(localeSectionIds.some((id) => site.locales[id])).toBe(false)
+            for (const item of config.navigation.filter((item) => item.url.startsWith('/'))) {
+                expect(item.url.startsWith(`/${locale}/`)).toBe(true)
+                expect(localeSectionIds).toContain(item.url.split('/')[2])
+            }
         }
     })
 
@@ -74,25 +106,38 @@ describe('documentation template content', () => {
         const links = sidebarLinks(sidebars)
 
         for (const file of documentationPages) {
-            const section = file.split('/')[1]
+            const [, , section] = file.split('/')
             const frontmatter = frontmatterForDocument(file)
-            const route = routeForDocument(file)
 
             expect(frontmatter).not.toBeNull()
             expect(frontmatter?.title).toBeTruthy()
             expect(frontmatter?.teaser).toBeTruthy()
             expect(frontmatter?.section).toBe(section)
-            expect(links).toContainEqual(expect.objectContaining({ section, url: route }))
+            expect(links).toContainEqual(
+                expect.objectContaining({ section, url: sidebarPathForDocument(file) })
+            )
+            expect(routeForDocument(file).split('/')[1]).toBe(file.split('/')[1])
         }
     })
 
-    test('all sidebar links resolve to documents in the same section', () => {
+    test('shared sidebar links stay unprefixed and exist in every language', () => {
+        const site = readJson('meta/site.json')
         const links = sidebarLinks(readJson('meta/sidebars.json'))
-        const routes = new Set(documentationPages.map(routeForDocument))
 
         for (const link of links) {
             expect(link.url.split('/')[1]).toBe(link.section)
-            expect(routes).toContain(link.url)
+        }
+
+        for (const locale of Object.keys(site.locales)) {
+            const routes = new Set(
+                documentationPages
+                    .filter((file) => file.startsWith(`docs/${locale}/`))
+                    .map(sidebarPathForDocument)
+            )
+
+            for (const link of links) {
+                expect(routes).toContain(link.url)
+            }
         }
     })
 
@@ -111,7 +156,7 @@ describe('documentation template content', () => {
     })
 
     test('bundled component examples pair source code with a live result', () => {
-        const guidePath = 'docs/writing/mdx-components.mdx'
+        const guidePath = 'docs/zh-CN/writing/mdx-components.mdx'
         if (!fs.existsSync(resolveRepoPath(guidePath))) return
 
         const guide = read(guidePath)
@@ -133,7 +178,7 @@ describe('documentation template content', () => {
     })
 
     test('bundled asset examples only render files that exist in public', () => {
-        const guidePath = 'docs/writing/assets.mdx'
+        const guidePath = 'docs/zh-CN/writing/assets.mdx'
         if (!fs.existsSync(resolveRepoPath(guidePath))) return
 
         const guideWithoutCode = read(guidePath).replace(/```[\s\S]*?```/g, '')
@@ -155,8 +200,9 @@ describe('documentation template content', () => {
         expect(app).toContain("withBasePath('/sitemap.xml')")
         expect(app).toContain("withBasePath('/manifest.webmanifest')")
         expect(app).toContain('content={site.theme}')
-        expect(read('pages/_document.tsx')).toContain('lang={site.lang}')
-        expect(readJson('meta/site.json').lang).toEqual(expect.any(String))
+        expect(read('pages/_document.tsx')).toContain('lang={this.props.lang}')
+        expect(read('pages/_document.tsx')).toContain('langForPath')
+        expect(readJson('meta/site.json').locales['zh-CN'].lang).toBe('zh-CN')
         expect(read('src/components/embed.js')).toContain('withBasePathForUrl(src)')
     })
 

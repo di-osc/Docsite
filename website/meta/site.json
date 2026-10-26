@@ -1,39 +1,118 @@
 {
-    "title": "Documentation Template",
-    "lang": "zh-CN",
-    "description": "使用 MDX 编写、可静态导出并带有本地搜索的文档站模板。",
-    "slogan": "Build clear documentation with MDX",
     "company": "Your Organization",
     "companyUrl": "https://github.com/di-osc",
     "repo": "di-osc/Docsite",
     "theme": "#09a3d5",
-    "sections": [
-        { "id": "getting-started", "title": "入门", "theme": "blue" },
-        { "id": "writing", "title": "编写", "theme": "blue" },
-        { "id": "publishing", "title": "发布", "theme": "blue" }
-    ],
-    "navigation": [
-        { "text": "入门", "url": "/getting-started" },
-        { "text": "编写", "url": "/writing" },
-        { "text": "发布", "url": "/publishing" }
-    ],
-    "footer": [
-        {
-            "label": "文档",
-            "items": [
-                { "text": "模板概览", "url": "/getting-started" },
-                { "text": "编写文档", "url": "/writing" },
-                { "text": "构建与部署", "url": "/publishing/build-and-deploy" }
-            ]
-        },
-        {
-            "label": "链接",
-            "items": [
+    "locales": {
+        "zh-CN": {
+            "label": "中文",
+            "lang": "zh-CN",
+            "title": "文档站模板",
+            "description": "使用 MDX 编写、可静态导出并带有本地搜索的文档站模板。",
+            "slogan": "用 MDX 搭建清晰的文档",
+            "sections": [
+                { "id": "getting-started", "title": "入门", "theme": "blue" },
+                { "id": "writing", "title": "编写", "theme": "blue" },
+                { "id": "publishing", "title": "发布", "theme": "blue" }
+            ],
+            "navigation": [
+                { "text": "入门", "url": "/zh-CN/getting-started" },
+                { "text": "编写", "url": "/zh-CN/writing" },
+                { "text": "发布", "url": "/zh-CN/publishing" }
+            ],
+            "footer": [
                 {
-                    "text": "模板仓库",
-                    "url": "https://github.com/di-osc/Docsite"
+                    "label": "文档",
+                    "items": [
+                        { "text": "模板概览", "url": "/zh-CN/getting-started" },
+                        { "text": "编写文档", "url": "/zh-CN/writing" },
+                        { "text": "构建与部署", "url": "/zh-CN/publishing/build-and-deploy" }
+                    ]
+                },
+                {
+                    "label": "链接",
+                    "items": [
+                        {
+                            "text": "模板仓库",
+                            "url": "https://github.com/di-osc/Docsite"
+                        }
+                    ]
                 }
-            ]
+            ],
+            "ui": {
+                "searchLabel": "搜索文档",
+                "searchKeyword": "搜索关键词",
+                "searchPlaceholder": "搜索文档",
+                "closeSearch": "关闭搜索",
+                "searchResults": "搜索结果",
+                "searchPrompt": "输入关键词搜索文档",
+                "searching": "正在搜索…",
+                "searchEmpty": "未找到相关文档",
+                "searchUnavailable": "搜索索引暂时不可用。开发环境请运行 npm run preview:search。",
+                "searchRetry": "重新加载",
+                "searchHints": "↑↓ 选择 · Enter 打开 · Esc 关闭",
+                "suggestEdit": "建议修改",
+                "readNext": "下一篇",
+                "notFoundTitle": "页面不存在",
+                "notFoundBody": "没有找到这个页面",
+                "backHome": "返回首页",
+                "open": "进入"
+            }
+        },
+        "en": {
+            "label": "English",
+            "lang": "en",
+            "title": "Documentation Template",
+            "description": "A static documentation site template written in MDX, with local search.",
+            "slogan": "Build clear documentation with MDX",
+            "sections": [
+                { "id": "getting-started", "title": "Getting started", "theme": "blue" },
+                { "id": "writing", "title": "Writing", "theme": "blue" },
+                { "id": "publishing", "title": "Publishing", "theme": "blue" }
+            ],
+            "navigation": [
+                { "text": "Getting started", "url": "/en/getting-started" },
+                { "text": "Writing", "url": "/en/writing" },
+                { "text": "Publishing", "url": "/en/publishing" }
+            ],
+            "footer": [
+                {
+                    "label": "Docs",
+                    "items": [
+                        { "text": "Overview", "url": "/en/getting-started" },
+                        { "text": "Writing", "url": "/en/writing" },
+                        { "text": "Build and deploy", "url": "/en/publishing/build-and-deploy" }
+                    ]
+                },
+                {
+                    "label": "Links",
+                    "items": [
+                        {
+                            "text": "Template repository",
+                            "url": "https://github.com/di-osc/Docsite"
+                        }
+                    ]
+                }
+            ],
+            "ui": {
+                "searchLabel": "Search docs",
+                "searchKeyword": "Search keywords",
+                "searchPlaceholder": "Search docs",
+                "closeSearch": "Close search",
+                "searchResults": "Search results",
+                "searchPrompt": "Type to search the docs",
+                "searching": "Searching…",
+                "searchEmpty": "No matching documents",
+                "searchUnavailable": "The search index is unavailable. In development, run npm run preview:search.",
+                "searchRetry": "Reload",
+                "searchHints": "↑↓ select · Enter open · Esc close",
+                "suggestEdit": "Suggest an edit",
+                "readNext": "Read next",
+                "notFoundTitle": "Page not found",
+                "notFoundBody": "This page could not be found",
+                "backHome": "Back to the start",
+                "open": "Open"
+            }
         }
-    ]
+    }
 }

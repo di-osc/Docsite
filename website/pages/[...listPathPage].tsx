@@ -7,8 +7,13 @@ import Layout from '../src/templates'
 import remarkPlugins from '../plugins/index.mjs'
 import { remarkComponents } from '../src/remark'
 
-import recordSection from '../meta/recordSections'
-import sidebars from '../meta/sidebars.json'
+import { localeConfig, localeIds, sectionsById } from '../src/locales'
+import {
+    assertLocaleIdsDoNotCollide,
+    getDocsDirectory,
+    languageLinksForPage,
+    sidebarForLocale,
+} from '../src/localeContent'
 
 type ApiDetails = {
     stringName: string | null
@@ -50,15 +55,11 @@ type ParsedUrlQuery = {
     listPathPage: Array<string>
 }
 
-/**
- * 返回仓库根目录下的文档目录。
- * 文档与 website 应用同级；Next 构建时工作目录是 website，所以向上一级解析。
- */
-const getDocsDirectory = (): string => path.resolve(process.cwd(), '..', 'docs')
-
 export const getStaticPaths: GetStaticPaths<ParsedUrlQuery> = async () => {
-    // This function needs to be defined inside `getStaticPath` to be executed in executed in the correct context
-    const loadFolder = (pathBase: Array<string> = []): Array<{ params: ParsedUrlQuery }> =>
+    assertLocaleIdsDoNotCollide()
+
+    // 只扫描 docs/<语言>/。地址始终保留语言目录，不把某种语言当成无前缀的默认站。
+    const loadFolder = (pathBase: Array<string>): Array<{ params: ParsedUrlQuery }> =>
         fs
             .readdirSync(path.join(getDocsDirectory(), ...pathBase), { withFileTypes: true })
             .flatMap((dirent: fs.Dirent) => {
@@ -79,8 +80,14 @@ export const getStaticPaths: GetStaticPaths<ParsedUrlQuery> = async () => {
                 }
             })
 
+    const paths = localeIds().flatMap((locale) => {
+        const localeDirectory = path.join(getDocsDirectory(), locale)
+
+        return fs.existsSync(localeDirectory) ? loadFolder([locale]) : []
+    })
+
     return {
-        paths: loadFolder(),
+        paths,
         fallback: false,
     }
 }
@@ -108,12 +115,20 @@ export const getStaticProps: GetStaticProps<PropsPage, ParsedUrlQuery> = async (
         throw new Error(`Frontmatter missing for ${pathFileWithIndexAndExtension}`)
     }
 
+    const locale = args.params.listPathPage[0]
+    const localeMeta = localeConfig(locale)
+
+    if (!localeMeta) {
+        return { notFound: true }
+    }
+
+    // 父目录是章节，不是语言。docs/zh-CN/getting-started/index.mdx 的父目录是 getting-started。
     const parentFolder =
-        listPathFileWithIndex.length > 1
+        listPathFileWithIndex.length > 2
             ? listPathFileWithIndex[listPathFileWithIndex.length - 2]
             : null
     const section = mdx.frontmatter.section ?? parentFolder
-    const sectionMeta = section ? recordSection[section] ?? null : null
+    const sectionMeta = section ? sectionsById(locale)[section] ?? null : null
     const baseClass = null
     const apiDetails: ApiDetails = {
         stringName: mdx.frontmatter.api_string_name ?? null,
@@ -127,19 +142,25 @@ export const getStaticProps: GetStaticProps<PropsPage, ParsedUrlQuery> = async (
     }
 
     const slug = `/${args.params.listPathPage.join('/')}`
-
-    const sidebarFlat = sidebars
-        .find((sidebar) => sidebar.section === section)
-        ?.items.flatMap((group) => group.items)
-    const next = sidebarFlat?.find((item, index) => {
-        return index > 0 && sidebarFlat[index - 1].url === slug && item.url[0] === '/'
-    })
+    const sectionSidebar = sidebarForLocale(locale).find((sidebar) => sidebar.section === section)
+    const sidebarItems = sectionSidebar?.items ?? []
+    const sidebarFlat = sidebarItems.flatMap((group) => group.items)
+    const currentIndex = sidebarFlat.findIndex((item) => item.url === slug)
+    const next = currentIndex >= 0 ? sidebarFlat[currentIndex + 1] : undefined
 
     return {
         props: {
             ...mdx.frontmatter,
             slug,
             mdx,
+            locale,
+            siteTitle: localeMeta.title,
+            description: localeMeta.description,
+            navigation: localeMeta.navigation,
+            footer: localeMeta.footer,
+            ui: localeMeta.ui,
+            sidebar: sidebarItems,
+            languageLinks: languageLinksForPage(slug, locale),
             sectionTitle: sectionMeta?.title ?? null,
             theme: sectionMeta?.theme ?? null,
             section: section,

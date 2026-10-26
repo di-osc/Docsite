@@ -1,0 +1,152 @@
+---
+title: Troubleshooting
+teaser: Fix navigation, anchors, search, builds, and GitHub Pages deploys
+section: publishing
+menu:
+  - ["Documents and navigation", "documents"]
+  - ["Search", "search"]
+  - ["GitHub Pages", "github-pages"]
+  - ["Build and sitemap", "build"]
+  - ["Local port", "port"]
+  - ["Still stuck", "next"]
+---
+
+Reproduce the smallest failure first, then read the first real error in the
+terminal or in GitHub Actions. Later errors are often just the first step
+failing. Run the npm commands on this page from `website/`. Run `nvm use`
+there too. The version comes from `website/.nvmrc`.
+
+## Documents and navigation {id="documents"}
+
+| What you see                                | Usual cause                                 | What to do                            |
+| ------------------------------------------- | ------------------------------------------- | ------------------------------------- |
+| The URL opens, but the sidebar has no entry | It is not in `website/meta/sidebars.json`   | Add the route to that section         |
+| A test says a sidebar URL is missing        | The URL does not match the MDX route        | Follow the `index.mdx` route rules    |
+| A test says the section does not match      | Directory, frontmatter, or config id differ | Use one section id in all four places |
+| The right-hand menu does not scroll         | A `menu` id has no heading anchor           | Add `{id="..."}` after `##`           |
+| "Read next" is in the wrong order           | You expected file-name order                | Reorder the `sidebars.json` array     |
+
+After a rename, search from the repository root with
+`rg "/old-path" docs website/meta website/pages`.
+
+For example, `docs/en/guide/install.mdx` opens at `/en/guide/install`, but the
+sidebar has no entry:
+
+1. Confirm the page frontmatter says `section: guide`.
+2. Add `{ "text": "Install", "url": "/guide/install" }` to the `guide` group
+   in `website/meta/sidebars.json`. This `url` has no language.
+3. From `website/`, run `npm test -- --runInBand`.
+
+After the tests pass and you refresh, Install appears in the sidebar. Its
+place in the array is also its place in Read next.
+
+## Search {id="search"}
+
+No results under `npm run dev` is expected. Run:
+
+```bash
+npm run preview:search
+```
+
+If the preview is still empty:
+
+1. Confirm the build log says Pagefind found HTML pages.
+2. In the browser network panel, check that `pagefind.js` is not 404.
+3. Rebuild completely after edits. Do not keep using an old `website/out/`.
+4. Confirm a custom page includes `data-pagefind-body`.
+
+A production-only failure usually means the deploy subpath was not passed into
+the build. GitHub Pages injects it through the included workflow. Other hosts
+need `NEXT_PUBLIC_BASE_PATH`.
+
+A common false alarm: you add "AcmeClient" while `npm run dev` is running,
+search finds nothing, and you assume the index is corrupt. Stop the dev
+server and run `npm run preview:search`. After Pagefind finishes, search for
+"AcmeClient". It should hit
+[MDX components](/en/writing/mdx-components#type-annotations).
+
+## GitHub Pages {id="github-pages"}
+
+| What you see                              | What to check                                                                 |
+| ----------------------------------------- | ----------------------------------------------------------------------------- |
+| Enabling Pages fails because of the plan  | The repository is still private. The free plan needs a public repository      |
+| A push does not start a workflow          | The file is `.github/workflows/deploy-pages.yml`, and the branch is `main`    |
+| Pages says the source is not configured   | **Settings → Pages → Source** is **GitHub Actions**                           |
+| The workflow cannot deploy                | Actions and Pages policy, plus `pages: write` and `id-token: write`           |
+| The home page works, images or search 404 | `base_path` in the build log, and whether the included workflow ran           |
+| Refreshing a second-level URL is 404      | The host is serving a complete `website/out`, and the Pages workflow finished |
+| The URL uses the wrong repository name    | Let `actions/configure-pages` provide the base path                           |
+
+Open the failed workflow and read the `build` job before the `deploy` job. A
+failed build does not produce a usable site. If the build succeeded and the
+deploy failed, check Pages settings and permissions.
+
+If the home page works but `/sdk-docs/images/logo.svg` is 404, narrow it down:
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/sdk-docs \
+SITE_URL=https://acme.github.io/sdk-docs \
+npm run build
+test -f out/images/logo.svg
+```
+
+- The file is missing: it is not at `website/public/images/logo.svg`. Fix the
+  source path first.
+- The file exists but production is 404: confirm Actions deployed the whole
+  `website/out`, and the page uses `/images/logo.svg`. Do not write
+  `/sdk-docs` in the source. The build adds that prefix.
+- After you rerun the workflow, the final request should have the `/sdk-docs`
+  prefix once.
+
+## Build and sitemap {id="build"}
+
+| What you see                       | What to do                                                                    |
+| ---------------------------------- | ----------------------------------------------------------------------------- |
+| Wrong Node version                 | Run `nvm use` inside `website/`. CI uses Node.js 24                           |
+| Tests pass and the build fails     | Look for MDX syntax, invalid JSX, and unknown components                      |
+| The sitemap uses localhost         | Set a full `SITE_URL` for the build                                           |
+| The sitemap is missing the subpath | `SITE_URL` should include `/repository` or the real directory                 |
+| Static files have the prefix twice | Write `/images/...` in documents. The build variable adds the repository name |
+
+Simulate a GitHub Pages project path locally:
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/your-repository \
+SITE_URL=https://your-name.github.io/your-repository \
+npm run build
+```
+
+Then run:
+
+```bash
+rg 'https://your-name.github.io/your-repository' out/sitemap.xml
+```
+
+It should match at least the home page URL. If you still see `localhost`,
+`SITE_URL` was not in the shell that actually ran the build.
+
+## Local port {id="port"}
+
+`EADDRINUSE: address already in use :::3000` means port 3000 is taken. Stop
+the old server, or use another port:
+
+```bash
+PORT=3001 npm run preview:search
+```
+
+The Next.js dev server can use `npm run dev -- -p 3001`. Open the port the
+terminal prints.
+
+## Still stuck {id="next"}
+
+Collect this before you open an issue:
+
+- The failing command and the first complete error.
+- Node.js and npm versions.
+- Whether it reproduces locally or only on the host.
+- The smallest diff in the MDX, `site.json`, `sidebars.json`, and workflow.
+- The expected URL, the actual URL, and the 404 address from the network
+  panel.
+
+Do not include access tokens, private repository URLs, or secrets from
+environment variables.

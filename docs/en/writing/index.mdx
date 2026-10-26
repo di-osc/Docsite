@@ -1,0 +1,186 @@
+---
+title: Add and organize pages
+teaser: Put the page you wrote into the sidebar, then add the next one
+section: writing
+menu:
+  - ["Routes", "routes"]
+  - ["Add it to the sidebar", "sidebars"]
+  - ["Frontmatter", "frontmatter"]
+  - ["Write another page", "create-page"]
+  - ["Add a chapter", "new-section"]
+  - ["Rename or delete", "rename-delete"]
+  - ["Check the result", "verify"]
+---
+
+The file from [Quick start](/en/getting-started/quickstart#first-page),
+`docs/en/getting-started/hello.mdx`, already opens at its URL. It is not in
+the sidebar yet. This page puts it into Getting started. Components and images
+come next. A new chapter, the site name, and the home page come after that.
+
+## Routes {id="routes"}
+
+The directory and file name decide the URL:
+
+| File                                   | Route                          |
+| -------------------------------------- | ------------------------------ |
+| `docs/<language>/<section>/index.mdx`  | `/<language>/<section>`        |
+| `docs/<language>/<section>/<page>.mdx` | `/<language>/<section>/<page>` |
+
+The file you just created follows that rule:
+
+- `docs/en/getting-started/hello.mdx` → `/en/getting-started/hello`
+
+This handbook does too:
+
+- `docs/en/writing/index.mdx` → `/en/writing`
+- `docs/en/writing/mdx-components.mdx` → `/en/writing/mdx-components`
+
+The language directory stays in the URL. File order on disk does not change
+the navigation. `index.mdx` is the chapter entry. Other file names become the
+last URL segment. Prefer lowercase English and hyphens.
+
+## Add it to the sidebar {id="sidebars"}
+
+`website/meta/sidebars.json` controls both:
+
+- the groups and page order in the left navigation
+- the order of "Read next" at the bottom of a page
+
+Open the file and find `"section": "getting-started"`. Add Hello after Quick
+start. Change only that group's `items`. Replacing the whole file removes
+Writing and Publishing from the sidebar:
+
+```json
+{
+  "label": "Getting started",
+  "items": [
+    { "text": "Template overview", "url": "/getting-started" },
+    { "text": "Quick start", "url": "/getting-started/quickstart" },
+    { "text": "Hello", "url": "/getting-started/hello" }
+  ]
+}
+```
+
+`text` is the fallback label. `url` has no language, because every language
+shares this file. On an English page, `/getting-started/hello` opens
+`/en/getting-started/hello`. Array order is the sidebar order and the "Read
+next" order. The visible name is that language's MDX `title`. A page that does
+not exist in a language is left out of that language's sidebar.
+
+Save and refresh. Getting started should list Template overview, Quick start,
+then Hello. Quick start's "Read next" should point at Hello.
+
+## Frontmatter {id="frontmatter"}
+
+Quick start already used `title`, `teaser`, and `section`. This step adds
+`menu` to the Hello page. It is the short list on the right. Change
+`docs/en/getting-started/hello.mdx` to:
+
+```mdx
+---
+title: Hello
+teaser: My first document
+section: getting-started
+menu:
+  - ["Next line", "next"]
+---
+
+Write the body in Markdown.
+
+## Next line {id="next"}
+
+This section appears on the right side of the page.
+```
+
+The fields mean:
+
+- `title`: the page heading.
+- `teaser`: the summary under the heading.
+- `section`: the chapter. It must match the directory and that language's
+  `locales.<language>.sections[].id`.
+- `menu`: optional right-hand list. Each item is `[label, anchor id]`.
+
+Every `menu` id must be declared on a `##` heading, for example
+`## Next line {id="next"}`. The label can differ, but the id must match and be
+unique on the page. The template tests check for missing anchors.
+
+Refresh `/en/getting-started/hello`. The heading is still "Hello", and the
+right side should show "Next line". The URL gains `#next` when you click it.
+
+## Write another page {id="create-page"}
+
+To add another page in the same chapter, repeat the two steps: write the file,
+then append it to the same `items` array.
+
+Create `docs/en/getting-started/notes.mdx`:
+
+```mdx
+---
+title: Notes
+teaser: A second page in Getting started
+section: getting-started
+---
+
+Continue writing here.
+```
+
+After Hello, add `{ "text": "Notes", "url": "/getting-started/notes" }`.
+
+`/en/getting-started/notes` then opens, and Hello's next page is Notes. The
+sidebar config still says `/getting-started/notes`.
+
+## Add a chapter {id="new-section"}
+
+The steps above only changed Getting started: one MDX file and one sidebar
+item.
+
+A new chapter also has to appear in the header, so you change that language's
+`sections` and `navigation` inside `locales`, and you append a group to
+`website/meta/sidebars.json`. The full example is
+[Site configuration](/en/writing/site-configuration), using the fictional
+product guide. Skip that on this page.
+
+## Rename or delete {id="rename-delete"}
+
+To rename a page:
+
+1. Rename the MDX file.
+2. Update the sidebar URL and any links in the body, home page, and footer.
+3. If the section id changes, also update the directory, every page's
+   frontmatter, the site config, and the sidebar.
+
+To delete a page, remove the sidebar link first, then delete the file. The
+template does not redirect old URLs. If a public URL must keep working,
+configure the redirect on the host, or leave a short page in place.
+
+To rename the notes page, run this from the repository root. `docs/` is at the
+root. `meta/` and `pages/` are inside `website/`:
+
+```bash
+git mv docs/en/getting-started/notes.mdx docs/en/getting-started/setup.mdx
+rg "/en/getting-started/notes" docs website/meta website/pages
+```
+
+Change every old link to `/en/getting-started/setup`, then run the tests. The
+tests should stop reporting the old sidebar URL, and the browser should open
+the new address.
+
+## Check the result {id="verify"}
+
+From `website/`, run:
+
+```bash
+npm test -- --runInBand
+npm run build
+```
+
+Then open `/en/getting-started/hello` and check:
+
+- The title is "Hello" and the summary is "My first document".
+- Getting started lists it, in the same order as `sidebars.json`.
+- "Next line" on the right scrolls to that heading.
+- Refreshing the page still opens it.
+
+When those pass, the page is part of the site. The next page,
+[MDX components](/en/writing/mdx-components), adds callouts, buttons, and
+accordions to a page like this one.

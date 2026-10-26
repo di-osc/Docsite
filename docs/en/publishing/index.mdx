@@ -1,0 +1,135 @@
+---
+title: Local search
+teaser: Build an offline Pagefind index for the static site
+section: publishing
+menu:
+  - ["Develop and preview", "workflows"]
+  - ["What gets indexed", "scope"]
+  - ["Check search", "verify"]
+  - ["Rebuild the index", "rebuild"]
+  - ["No results", "empty"]
+  - ["Custom pages (optional)", "custom"]
+---
+
+The template uses Pagefind for local search. The index is built after the
+static export, so the everyday dev server has no search results. Run every
+command on this page from `website/`.
+
+## Develop and preview {id="workflows"}
+
+| Command                  | What it does                                                 |
+| ------------------------ | ------------------------------------------------------------ |
+| `npm run dev`            | Edit and preview. Does not build a search index              |
+| `npm run preview:search` | Rebuild, generate the index, and start a preview with search |
+| `npm run search:index`   | Rebuild the Pagefind index for an existing `website/out/`    |
+| `npm run build`          | Production build: static export plus the search index        |
+
+To check search, run `npm run preview:search`. After the build, open
+[`http://localhost:3000`](http://localhost:3000) and use Search docs in the
+header, or the shortcut shown in the UI. If the port is taken, run
+`PORT=3001 npm run preview:search`.
+
+The terminal should first report a successful Next.js export, then how many
+pages Pagefind indexed, then the preview URL. Search works only after that
+preview server is up.
+
+## What gets indexed {id="scope"}
+
+Pagefind indexes:
+
+- page titles
+- section headings
+- body text
+
+It skips:
+
+- code blocks
+- navigation and the footer
+- page chrome such as the example sidebar
+
+Example code itself usually does not appear in results. The explanation around
+an example does.
+
+## Check search {id="verify"}
+
+You can repeat this check against this handbook:
+
+```text
+pagefind_code_only_7f3a
+```
+
+| Query                                   | Expected result                                 |
+| --------------------------------------- | ----------------------------------------------- |
+| `Local search`                          | Opens the top of this page                      |
+| `Custom pages`                          | Opens the optional section on this page         |
+| `offline`                               | The excerpt shows body text near "Local search" |
+| the unique word in the code block above | No result, because code blocks are not indexed  |
+
+After the fixed sample, check four kinds of words from your own content:
+
+1. A unique word in a page title should open the top of that page.
+2. A unique word in a `##` heading should open that anchor.
+3. A unique word in body text should show nearby words in the excerpt.
+4. A word that appears only in a code block should usually have no result.
+
+Choosing a result on the current page should close search and jump to the
+anchor. Choosing a result on another page should change both the URL and the
+content.
+
+## Rebuild the index {id="rebuild"}
+
+The Pagefind index comes from `website/out/`. A running `npm run dev` does not
+update it. After documents change:
+
+- Prefer `npm run preview:search`. It builds everything and starts the preview.
+- When `website/out/` is already current, `npm run search:index` rebuilds only
+  the index.
+- When the static pages may be stale, run `npm run build`, then build the
+  index.
+
+Each index command clears the old `website/out/pagefind` first, so old hits
+do not linger.
+
+## No results {id="empty"}
+
+Check in this order:
+
+1. You are running `preview:search`, not `npm run dev`.
+2. The build log says Pagefind found and indexed HTML pages.
+3. The browser network panel can load `/pagefind/pagefind.js`.
+4. The body is inside `data-pagefind-body` and is not excluded by
+   `data-pagefind-ignore`.
+5. After editing, you regenerated `website/out/` and the index.
+
+If it fails only on GitHub Pages, check the repository subpath and the
+workflow build environment. See
+[Troubleshooting](/en/publishing/troubleshooting).
+
+After search checks out, continue to
+[Build and deploy](/en/publishing/build-and-deploy).
+
+## Custom pages (optional) {id="custom"}
+
+Skip this section if you only write MDX. Normal document pages already mark
+what should be indexed.
+
+When you add your own React page, these two attributes control the index:
+
+- `data-pagefind-body`: the region that should be indexed
+- `data-pagefind-ignore`: a node that should stay out of search
+
+```tsx
+export default function Changelog() {
+  return (
+    <main data-pagefind-body>
+      <h1>Acme SDK changelog</h1>
+      <p>The heading and this paragraph are indexed.</p>
+      <nav data-pagefind-ignore>Pagination links are not indexed.</nav>
+    </main>
+  );
+}
+```
+
+After `npm run preview:search`, searching for "Acme SDK changelog" should hit
+that page. Searching for "Pagination links" should not. The attributes must be
+on the HTML node that becomes the final body.

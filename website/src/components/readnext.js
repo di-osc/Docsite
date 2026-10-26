@@ -7,11 +7,11 @@ import { Label } from './typography'
 
 import classes from '../styles/readnext.module.sass'
 
-export default function ReadNext({ title, to }) {
+export default function ReadNext({ title, to, label = '下一篇' }) {
     return (
         <Link to={to} noLinkLayout className={classes.root}>
             <span>
-                <Label>Read next</Label>
+                <Label>{label}</Label>
                 {title}
             </span>
             <span className={classes.icon}>
@@ -24,4 +24,5 @@ export default function ReadNext({ title, to }) {
 ReadNext.propTypes = {
     title: PropTypes.string.isRequired,
     to: PropTypes.string.isRequired,
+    label: PropTypes.string,
 }

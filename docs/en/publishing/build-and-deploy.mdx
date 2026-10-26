@@ -1,0 +1,181 @@
+---
+title: Build and deploy
+teaser: Run the tests, export the static site, and deploy it
+section: publishing
+menu:
+  - ["Before you publish", "checks"]
+  - ["Production build", "build"]
+  - ["GitHub Pages", "github-pages"]
+  - ["Other hosts", "platforms"]
+  - ["Environment variables", "environment"]
+  - ["After it is live", "acceptance"]
+---
+
+The template emits a static site. After a successful build in `website/`, the
+deploy directory is `website/out/`. Any host that serves static files can take
+it. Run every command on this page from `website/`.
+
+## Before you publish {id="checks"}
+
+Run these in order:
+
+```bash
+npm test -- --runInBand
+npm run lint
+npm run build
+```
+
+- `npm test` checks document structure, config, and the main constraints.
+- `npm run lint` checks the TypeScript and React code.
+- `npm run build` exports the static site and builds the search index.
+
+Also look at the home page, at least one document, images, in-site links, and
+search. If production is on a subpath, build once locally with the same
+`NEXT_PUBLIC_BASE_PATH`.
+
+## Production build {id="build"}
+
+```bash
+npm run build
+```
+
+The command:
+
+1. Runs the Next.js build and static export
+2. Generates the sitemap
+3. Builds a Pagefind index for `website/out/`
+
+Success means three things at once: Next.js reports the static pages, Pagefind
+reports indexed pages, and the command exits 0. Then check the important
+outputs in the same directory:
+
+```bash
+test -f out/index.html
+test -f out/pagefind/pagefind.js
+test -f out/sitemap.xml
+```
+
+All three commands succeed with no output. The home page, search, and sitemap
+exist.
+
+## GitHub Pages {id="github-pages"}
+
+The template includes `.github/workflows/deploy-pages.yml`. After you create
+your repository from the template, you do not copy another workflow. On every
+push to `main` it builds the site, uploads `website/out`, and publishes GitHub
+Pages.
+
+GitHub Pages on the free plan needs a public repository. A private repository
+cannot enable Pages.
+
+Set it up in this order:
+
+1. Create the repository with **Use this template**, or push the template to
+   `main` on a new repository.
+2. Open **Settings → Pages**.
+3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+4. Push to `main` again, or run **Deploy GitHub Pages** by hand from
+   **Actions**.
+5. Wait for the `deploy` job, then open the site from the workflow page or
+   **Settings → Pages**.
+
+Actions should show `build` and then `deploy`, both successful. For user
+`acme` and repository `sdk-docs`, the address is
+`https://acme.github.io/sdk-docs/`.
+
+A normal repository `docs-template` is at:
+
+```text
+https://<user>.github.io/<repository>/
+```
+
+If the repository name is `<user>.github.io`, the site is at the root:
+
+```text
+https://<user>.github.io/
+```
+
+To check the same subpath locally, replace the sample with your repository:
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/sdk-docs \
+SITE_URL=https://acme.github.io/sdk-docs \
+npm run build
+```
+
+After the build, URLs in `website/out/sitemap.xml` should start with
+`https://acme.github.io/sdk-docs/`. Generated page assets should include
+`/sdk-docs/_next/`.
+
+The workflow reads the real deployment settings with
+`actions/configure-pages` and injects them at build time:
+
+- `NEXT_PUBLIC_BASE_PATH`: `/<repository>` for a project site, empty for a
+  user site
+- `SITE_URL`: the public address used in the sitemap
+
+You do not type the repository subpath by hand. Next.js assets, the PWA
+manifest, Pagefind results, and document images share that prefix.
+
+If the default branch is not `main`, change `on.push.branches` in the
+workflow. If Actions shows no workflow, confirm the file is on the default
+branch under `.github/workflows/`, and that the repository allows GitHub
+Actions.
+
+## Other hosts {id="platforms"}
+
+The output is plain static files. Set the host's root directory to `website`.
+The build command stays `npm run build`, and the publish directory stays
+`out`. GitHub Pages uses the workflow at the repository root, and its artifact
+path is `website/out`.
+
+| Host                 | Build command           | Publish directory   | Notes                                                   |
+| -------------------- | ----------------------- | ------------------- | ------------------------------------------------------- |
+| GitHub Pages         | built into the workflow | `website/out`       | Injects the repository subpath and site URL             |
+| Vercel               | `npm run build`         | `out`               | Root directory `website`. See `website/vercel.json`     |
+| Cloudflare Pages     | `npm run build`         | `out`               | Root directory `website`. Set Node.js 24 and `SITE_URL` |
+| Netlify              | `npm run build`         | `out`               | Root directory `website`. Set Node.js 24 and `SITE_URL` |
+| Object storage / CDN | local or CI build       | upload all of `out` | The host must support directory-style clean URLs        |
+
+Do not set `NEXT_PUBLIC_BASE_PATH` when the site is at the domain root. Set
+`/docs` only when the site lives on a subpath such as
+`https://example.com/docs/`.
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/docs \
+SITE_URL=https://example.com/docs \
+npm run build
+```
+
+## Environment variables {id="environment"}
+
+| Variable                | Required                      | Role                                                    |
+| ----------------------- | ----------------------------- | ------------------------------------------------------- |
+| `SITE_URL`              | recommended in public deploys | Full public origin for the sitemap, including a subpath |
+| `NEXT_PUBLIC_BASE_PATH` | only for a subpath            | URL prefix for Next.js, search, and static files        |
+| `PORT`                  | optional local preview        | Port used by `preview:search`                           |
+
+The GitHub Pages workflow supplies the first two. Vercel can fall back to the
+platform domain. Other public sites should set `SITE_URL` explicitly. Without
+it, the sitemap uses `http://localhost:3000`, which is only for a local build.
+
+Do not add a trailing `/` to `NEXT_PUBLIC_BASE_PATH`, and do not put a full
+domain in it. `/sdk-docs` is correct. `/sdk-docs/` and
+`https://acme.github.io/sdk-docs` are not.
+
+## After it is live {id="acceptance"}
+
+A working home page is not a finished deploy. Check each item:
+
+- The home page title, cards, and external links are right.
+- Every chapter in the header opens, and the sidebar links work.
+- A second-level document URL opens, and a refresh still opens it.
+- Images and downloads are not 404.
+- Search finds a title, a section, and body text, and a result opens the
+  right anchor.
+- `/sitemap.xml` uses the public domain, not localhost.
+- On a narrow screen, navigation, tables, code blocks, and Examples are
+  readable.
+
+If the build or the live site fails, follow
+[Troubleshooting](/en/publishing/troubleshooting).

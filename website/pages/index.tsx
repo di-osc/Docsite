@@ -1,33 +1,32 @@
 import React from 'react'
 
 import Layout from '../src/templates'
-import {
-    LandingHeader,
-    LandingTitle,
-    LandingSubtitle,
-    LandingGrid,
-    LandingCard,
-} from '../src/components/landing'
+import { LandingHeader, LandingTitle, LandingGrid, LandingCard } from '../src/components/landing'
+import { languageChoices, siteMetadata } from '../src/locales'
 
+/**
+ * 网站根路径只列出已配置的语言，并进入该语言的第一章。
+ * 这里不是某一种语言的文档首页。
+ */
 export default function Home() {
+    const languages = languageChoices()
+
     return (
-        <Layout>
+        <Layout languageLinks={languages}>
             <LandingHeader>
-                <LandingTitle>静态文档站模板</LandingTitle>
-                <LandingSubtitle>
-                    使用 Next.js、MDX 和 Pagefind 构建清晰、可搜索的静态文档
-                </LandingSubtitle>
+                <LandingTitle>{siteMetadata.company}</LandingTitle>
             </LandingHeader>
-            <LandingGrid blocks>
-                <LandingCard title="配置驱动" url="/getting-started" button="开始使用">
-                    通过站点元数据和侧边栏配置组织大章节、小页面与阅读顺序。
-                </LandingCard>
-                <LandingCard title="MDX 与 Example" url="/writing/mdx-components" button="编写文档">
-                    使用 MDX 组件编写内容，并把可执行示例放在相关正文右侧。
-                </LandingCard>
-                <LandingCard title="本地搜索与静态部署" url="/publishing" button="发布站点">
-                    使用 Pagefind 生成本地索引，并把静态导出部署到任意托管平台。
-                </LandingCard>
+            <LandingGrid cols={2} blocks>
+                {languages.map((language) => (
+                    <LandingCard
+                        key={language.id}
+                        title={language.label}
+                        url={language.href}
+                        button={language.openLabel}
+                    >
+                        {language.description}
+                    </LandingCard>
+                ))}
             </LandingGrid>
         </Layout>
     )

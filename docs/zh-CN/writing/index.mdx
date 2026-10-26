@@ -12,30 +12,30 @@ menu:
   - ["验证结果", "verify"]
 ---
 
-[快速开始](/getting-started/quickstart#first-page) 里的
-`docs/getting-started/hello.mdx` 已经能用地址打开，左侧还没有它。这一页先把它放进
+[快速开始](/zh-CN/getting-started/quickstart#first-page) 里的
+`docs/zh-CN/getting-started/hello.mdx` 已经能用地址打开，左侧还没有它。这一页先把它放进
 “入门”。组件和图片在后面两页。新的大章节、站点名称和首页外观再往后。
 
 ## 路由规则 {id="routes"}
 
 文件放在哪个目录、叫什么名字，决定它的地址：
 
-| 文件                        | 路由                |
-| --------------------------- | ------------------- |
-| `docs/<section>/index.mdx`  | `/<section>`        |
-| `docs/<section>/<page>.mdx` | `/<section>/<page>` |
+| 文件                               | 路由                       |
+| ---------------------------------- | -------------------------- |
+| `docs/<语言>/<section>/index.mdx`  | `/<语言>/<section>`        |
+| `docs/<语言>/<section>/<page>.mdx` | `/<语言>/<section>/<page>` |
 
 你刚创建的文件就是这条规则：
 
-- `docs/getting-started/hello.mdx` → `/getting-started/hello`
+- `docs/zh-CN/getting-started/hello.mdx` → `/zh-CN/getting-started/hello`
 
 本手册自己的页面也一样：
 
-- `docs/writing/index.mdx` → `/writing`
-- `docs/writing/mdx-components.mdx` → `/writing/mdx-components`
+- `docs/zh-CN/writing/index.mdx` → `/zh-CN/writing`
+- `docs/zh-CN/writing/mdx-components.mdx` → `/zh-CN/writing/mdx-components`
 
-文件系统顺序不会影响导航。`index.mdx` 是大章节入口，其余文件名会直接成为 URL 的
-一部分，建议使用小写英文和连字符。
+地址始终带着语言目录。文件系统顺序不会影响导航。`index.mdx` 是大章节入口，其余
+文件名会直接成为 URL 的一部分，建议使用小写英文和连字符。
 
 ## 加入侧边栏 {id="sidebars"}
 
@@ -58,8 +58,10 @@ menu:
 }
 ```
 
-`text` 是左侧显示文字，`url` 是页面路由。数组顺序就是左侧顺序，也是页底“下一篇”
-的阅读顺序。
+`text` 是左侧显示文字。`url` 不写语言，所有语言共用这一份；打开中文页时，
+`/getting-started/hello` 会变成 `/zh-CN/getting-started/hello`。数组顺序就是左侧
+顺序，也是页底“下一篇”的阅读顺序。页面名称实际取该语言 MDX 的 `title`。这一语言
+还没写的页面不会出现在它的侧边栏里。
 
 保存后刷新。左侧“入门”里应依次出现“模板概览”“快速开始”“你好”，快速开始页底的
 “下一篇”应指向你好。
@@ -67,7 +69,7 @@ menu:
 ## 配置 Frontmatter {id="frontmatter"}
 
 `title`、`teaser` 和 `section` 在快速开始里已经用过。这一步给你好页加上 `menu`
-，它是页面右侧的小目录。把 `docs/getting-started/hello.mdx` 改成：
+，它是页面右侧的小目录。把 `docs/zh-CN/getting-started/hello.mdx` 改成：
 
 ```mdx
 ---
@@ -89,22 +91,21 @@ menu:
 
 - `title`：页面标题。
 - `teaser`：页面摘要，出现在页面头部说明中。
-- `section`：所属大章节，必须与目录名和 `website/meta/site.json` 里的
-  `sections[].id` 一致。
+- `section`：所属大章节，必须与目录名和该语言 `locales.<语言>.sections[].id` 一致。
 - `menu`：可选，右侧小目录；每一项是 `[显示文本, 锚点 id]`。
 
 每个 `menu` id 都必须在正文的 `##` 标题上明确声明，例如
 `## 下一句 {id="next"}`。显示文字可以不同，但 id 必须完全相同且在页面内唯一。模板
 测试会检查缺失锚点。
 
-刷新 `/getting-started/hello`。页首仍是“你好”，右侧应出现“下一句”。点击后 URL 带上
+刷新 `/zh-CN/getting-started/hello`。页首仍是“你好”，右侧应出现“下一句”。点击后 URL 带上
 `#next`。
 
 ## 再写一页 {id="create-page"}
 
 同一章里再加一页，重复刚才的两步：先写文件，再放进同一组 `items`。
 
-创建 `docs/getting-started/notes.mdx`：
+创建 `docs/zh-CN/getting-started/notes.mdx`：
 
 ```mdx
 ---
@@ -118,15 +119,16 @@ section: getting-started
 
 然后在“你好”后面加上 `{ "text": "笔记", "url": "/getting-started/notes" }`。
 
-保存后，`/getting-started/notes` 能打开，左侧“你好”的下一篇是“笔记”。
+保存后，`/zh-CN/getting-started/notes` 能打开，左侧“你好”的下一篇是“笔记”。侧边栏
+配置里的地址仍是 `/getting-started/notes`。
 
 ## 新增大章节 {id="new-section"}
 
 上面的步骤只改了已有的“入门”：一篇 MDX，再加一条侧边栏。
 
-新的大章节还要出现在右上角，所以还要改 `website/meta/site.json` 的 `sections` 和
+新的大章节还要出现在右上角，所以还要改该语言 `locales` 里的 `sections` 和
 `navigation`，并在 `website/meta/sidebars.json` 末尾增加一组。完整例子在后面的
-[站点配置](/writing/site-configuration)，用虚构产品的“产品指南”走一遍。这一页先不
+[站点配置](/zh-CN/writing/site-configuration)，用虚构产品的“产品指南”走一遍。这一页先不
 做。
 
 ## 重命名或删除 {id="rename-delete"}
@@ -144,11 +146,11 @@ section: getting-started
 `website/` 里：
 
 ```bash
-git mv docs/getting-started/notes.mdx docs/getting-started/setup.mdx
-rg "/getting-started/notes" docs website/meta website/pages
+git mv docs/zh-CN/getting-started/notes.mdx docs/zh-CN/getting-started/setup.mdx
+rg "/zh-CN/getting-started/notes" docs website/meta website/pages
 ```
 
-把搜索结果中的旧链接全部改为 `/getting-started/setup`，再运行测试。预期测试不再
+把搜索结果中的旧链接全部改为 `/zh-CN/getting-started/setup`，再运行测试。预期测试不再
 报告旧 sidebar URL，浏览器能打开新地址。
 
 ## 验证结果 {id="verify"}
@@ -160,7 +162,7 @@ npm test -- --runInBand
 npm run build
 ```
 
-然后打开 `/getting-started/hello` 并检查：
+然后打开 `/zh-CN/getting-started/hello` 并检查：
 
 - 页面标题是“你好”，摘要是“我的第一篇文档”。
 - 左侧“入门”里能看到它，顺序和 `sidebars.json` 一致。
@@ -168,4 +170,4 @@ npm run build
 - 直接刷新页面仍能打开。
 
 以上都通过后，这一页才算接进站点。下一页
-[MDX 组件](/writing/mdx-components) 在这个页面上加入提示框、按钮和折叠区。
+[MDX 组件](/zh-CN/writing/mdx-components) 在这个页面上加入提示框、按钮和折叠区。

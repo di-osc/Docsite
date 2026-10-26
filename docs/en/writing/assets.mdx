@@ -1,0 +1,136 @@
+---
+title: Images and links
+teaser: Place images, in-site links, and downloads with the files already in the template
+section: writing
+menu:
+  - ["The public directory", "public"]
+  - ["Insert an image", "images"]
+  - ["Write a link", "links"]
+  - ["GitHub Pages subpath", "base-path"]
+  - ["Checklist", "checklist"]
+---
+
+The previous page introduced MDX components. This page stays with standard
+Markdown. Images and downloads live in `website/public/`. In a document, the
+URL starts at the site root. The sample file is already in the template, so
+you can see the result immediately.
+
+## The public directory {id="public"}
+
+`website/public/` is the static-file root. A build run from `website/` copies
+those files into `website/out/`. The public URL does not include `public`.
+
+Sample layout:
+
+```text
+website/public/
+├── images/
+│   └── example-diagram.svg
+└── manifest.webmanifest
+```
+
+So:
+
+```text
+website/public/images/example-diagram.svg → /images/example-diagram.svg
+website/public/manifest.webmanifest       → /manifest.webmanifest
+```
+
+The path on the left exists in the source. The URL on the right works on the
+dev server and in the static site. Prefer lowercase English, digits, and
+hyphens. Avoid spaces and mixed case.
+
+## Insert an image {id="images"}
+
+A standard Markdown image is alt text plus a URL.
+
+Source:
+
+```md
+![MDX documents become a searchable static site through Next.js](/images/example-diagram.svg)
+```
+
+Result:
+
+![MDX documents become a searchable static site through Next.js](/images/example-diagram.svg)
+
+Alt text should say what the image communicates, not just "image". A
+decorative image can use empty alt text, `![](...)`. Prefer WebP or PNG for
+screenshots, and SVG for icons and diagrams.
+
+<Infobox title="Keep assets in the repository">
+
+An external HTTPS image can still display. Put important files in
+`website/public/` so the address travels with the repository and does not
+break when a third-party link disappears.
+
+</Infobox>
+
+## Write a link {id="links"}
+
+Links are an in-site page, an anchor on the current page, an external page, or
+a download:
+
+```md
+[Back to the overview](/en/getting-started) [Jump to the checklist](#checklist)
+[Open GitHub](https://github.com/)
+[View the web app manifest](/manifest.webmanifest)
+```
+
+Result:
+
+- [Back to the overview](/en/getting-started)
+- [Jump to the checklist](#checklist)
+- [Open GitHub](https://github.com/)
+- [View the web app manifest](/manifest.webmanifest)
+
+An in-site link starts with `/` and does not end in `.mdx` or `.html`. An
+anchor on the current page must match an explicit `{id="..."}` on a heading.
+An external link is a full HTTPS URL. Do not publish a local file path such as
+`../docs/en/guide/installation.mdx`.
+
+## GitHub Pages subpath {id="base-path"}
+
+A normal GitHub Pages repository is served from `/<repository>/`. Document
+source still uses the root-relative URL:
+
+```md
+![Diagram](/images/example-diagram.svg)
+```
+
+When the build variable is `NEXT_PUBLIC_BASE_PATH=/docs`, the template emits:
+
+```text
+/docs/images/example-diagram.svg
+```
+
+External links, `data:` URLs, relative paths, and URLs that already include
+the deployment prefix stay as written. The included GitHub Actions workflow
+sets the variable. On another subpath host, check it from `website/` like
+this:
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/docs \
+SITE_URL=https://example.com/docs \
+npm run build
+```
+
+After a successful build, `website/out/en/writing/assets.html` should contain
+image URLs prefixed with `/docs/images/`.
+
+## Checklist {id="checklist"}
+
+Before you commit an asset, confirm each item:
+
+- The image shows in development and in the production build.
+- The alt text explains the image on its own, and the size does not blow out
+  the column.
+- In-site links have no `.mdx` or `.html` suffix.
+- External links use HTTPS, and downloads really exist in `website/public/`.
+- After a subpath build, images, the manifest, and search assets share one
+  prefix.
+
+Pages, components, and images are enough to write the handbook.
+[Site configuration](/en/writing/site-configuration) and
+[Appearance](/en/writing/appearance) change the site name, chapters, and home
+page. Search comes later, in [Publishing](/en/publishing).

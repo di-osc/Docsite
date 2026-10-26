@@ -67,21 +67,21 @@ website/public/manifest.webmanifest       → /manifest.webmanifest
 链接分为站内页面、当前页锚点、外部页面和下载文件：
 
 ```md
-[返回模板概览](/getting-started) [跳到检查清单](#checklist)
+[返回模板概览](/zh-CN/getting-started) [跳到检查清单](#checklist)
 [访问 GitHub](https://github.com/)
 [查看 Web App manifest](/manifest.webmanifest)
 ```
 
 实际效果：
 
-- [返回模板概览](/getting-started)
+- [返回模板概览](/zh-CN/getting-started)
 - [跳到检查清单](#checklist)
 - [访问 GitHub](https://github.com/)
 - [查看 Web App manifest](/manifest.webmanifest)
 
 站内链接从 `/` 开始，不写 `.mdx` 或 `.html`；当前页锚点必须对应标题中的显式
 `{id="..."}`。外部链接写完整 HTTPS URL。不要把本地文件路径
-`../docs/guide/installation.mdx` 当成公开链接。
+`../docs/zh-CN/guide/installation.mdx` 当成公开链接。
 
 ## GitHub Pages 子路径 {id="base-path"}
 
@@ -106,7 +106,7 @@ SITE_URL=https://example.com/docs \
 npm run build
 ```
 
-构建成功后，在 `website/out/writing/assets.html` 中应能看到带 `/docs/images/` 前
+构建成功后，在 `website/out/zh-CN/writing/assets.html` 中应能看到带 `/docs/images/` 前
 缀的图片地址。
 
 ## 检查清单 {id="checklist"}
@@ -119,6 +119,6 @@ npm run build
 - 外部链接使用 HTTPS，下载文件真实存在于 `website/public/`。
 - 子路径构建后，图片、manifest 和搜索资源使用同一个前缀。
 
-页面、组件和图片到这里就够用了。接下来的 [站点配置](/writing/site-configuration)
-和 [外观定制](/writing/appearance) 改的是整站名称、大章节和首页。搜索放到后面的
-[发布](/publishing)。
+页面、组件和图片到这里就够用了。接下来的 [站点配置](/zh-CN/writing/site-configuration)
+和 [外观定制](/zh-CN/writing/appearance) 改的是整站名称、大章节和首页。搜索放到后面的
+[发布](/zh-CN/publishing)。

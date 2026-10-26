@@ -1,19 +1,36 @@
-import { Html, Head, Main, NextScript } from 'next/document'
+import Document, {
+    Html,
+    Head,
+    Main,
+    NextScript,
+    DocumentContext,
+    DocumentInitialProps,
+} from 'next/document'
 
-import site from '../meta/site.json'
+import { langForPath } from '../src/locales'
+
+type DocumentProps = DocumentInitialProps & { lang: string }
 
 /**
  * 全站 HTML 外壳。
- * 页面语言来自站点配置，应与文档正文使用同一种语言。
+ * 静态导出不能靠布局改 html 的 lang，所以按每个页面的路径设置。
  */
-export default function Document() {
-    return (
-        <Html lang={site.lang}>
-            <Head />
-            <body className="theme-blue">
-                <Main />
-                <NextScript />
-            </body>
-        </Html>
-    )
+export default class DocsiteDocument extends Document<DocumentProps> {
+    static async getInitialProps(ctx: DocumentContext): Promise<DocumentProps> {
+        const initialProps = await Document.getInitialProps(ctx)
+
+        return { ...initialProps, lang: langForPath(ctx.asPath) }
+    }
+
+    render() {
+        return (
+            <Html lang={this.props.lang}>
+                <Head />
+                <body className="theme-blue">
+                    <Main />
+                    <NextScript />
+                </body>
+            </Html>
+        )
+    }
 }

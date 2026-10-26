@@ -1,0 +1,167 @@
+---
+title: Appearance
+teaser: Change the home page, theme color, fonts, and site icon
+section: writing
+menu:
+  - ["Site identity", "identity"]
+  - ["Home page", "homepage"]
+  - ["Chapter themes", "themes"]
+  - ["Fonts and icons", "assets"]
+  - ["What to leave alone", "boundary"]
+---
+
+The previous page set the chapters. This page changes the home page, colors,
+and icons. That information lives in config and the home page, so you usually
+do not edit component logic. Change the words and colors first, then decide
+whether the layout needs to change.
+
+## Site identity {id="identity"}
+
+| Place                         | What to replace                                                                    |
+| ----------------------------- | ---------------------------------------------------------------------------------- |
+| `meta/site.json`              | Organization, repo, theme color, and each language's title, navigation, and footer |
+| `public/manifest.webmanifest` | `name`, `short_name`, `theme_color`                                                |
+| `pages/index.tsx`             | The root path lists languages. Do not turn it into one language's landing page     |
+| `README.md`                   | The public description and example URLs                                            |
+
+<Infobox title="Search for placeholders first">
+
+This command finds the common placeholders:
+
+```bash
+rg 'Documentation Template|Docs Template|Your Organization|your-org|example\.com'
+```
+
+Run it again after the edits. No output means those placeholders are gone.
+
+</Infobox>
+
+For Acme SDK, the identity in `meta/site.json` can look like this:
+
+```json
+{
+  "company": "Acme",
+  "companyUrl": "https://acme.example",
+  "repo": "acme/sdk-docs",
+  "theme": "#0a8f6a",
+  "locales": {
+    "en": {
+      "label": "English",
+      "lang": "en",
+      "title": "Acme SDK",
+      "description": "Documentation for the Acme SDK.",
+      "slogan": "Build with Acme"
+    }
+  }
+}
+```
+
+This shows only the fields you replace. Do not delete that language's
+`sections`, `navigation`, `footer`, or `ui`. The browser title, the name at
+the top left, the source link, and the footer organization should all update
+together.
+
+Then replace `public/manifest.webmanifest` with:
+
+```json
+{
+  "theme_color": "#0a8f6a",
+  "background_color": "#ffffff",
+  "display": "minimal-ui",
+  "scope": ".",
+  "start_url": ".",
+  "name": "Acme SDK Docs",
+  "short_name": "Acme SDK"
+}
+```
+
+Keep `scope` and `start_url` relative so the browser can resolve them on a
+GitHub Pages subpath. After a refresh, Application → Manifest in the devtools
+should show the new name and theme color.
+
+## Home page {id="homepage"}
+
+`pages/index.tsx` is the root path `/`. It lists the languages in `locales`,
+and each card opens that language's first chapter. It is not the English
+documentation home page. Do not replace it with a landing page for one
+language.
+
+Each language's title and description are `locales.<language>.title` and
+`description`. After a reader opens `/en/getting-started`, the header shows
+that language's chapter navigation.
+
+`LandingCard` is a home-page component. You cannot use it directly in an MDX
+document. The components an author can use, with live results, are on
+[MDX components](/en/writing/mdx-components).
+
+## Chapter themes {id="themes"}
+
+Pick a page theme in `locales.<language>.sections[].theme`:
+
+| Name      | Use it for                               |
+| --------- | ---------------------------------------- |
+| `blue`    | General, technical, and default chapters |
+| `green`   | Quick start and success paths            |
+| `purple`  | API and advanced topics                  |
+| `nightly` | Experimental or preview features         |
+| `legacy`  | Older versions or archived content       |
+
+Color variables and the `.theme-*` classes are in `src/styles/layout.sass`. A
+new theme name needs a matching class and four color variables: the main
+color, a dark color, a light background, and a translucent background.
+
+The root `site.json.theme` is the browser UI color. The manifest
+`theme_color` is the installed app's theme color. Neither changes a chapter
+color.
+
+For the Acme guide:
+
+```json
+{ "id": "guide", "title": "Product guide", "theme": "green" }
+```
+
+After you save and open `/en/guide`, that chapter's accent turns green. Other
+chapters keep their own theme.
+
+## Fonts and icons {id="assets"}
+
+- Font files are in `src/fonts/`. Families and weights are set in
+  `src/styles/layout.sass`.
+- Put site images in `public/`, for example `public/images/logo.svg`.
+- Manifest icons must be listed in the `icons` array of
+  `public/manifest.webmanifest`. The template ships a basic manifest and no
+  app icon.
+- Image rules and the GitHub Pages subpath are in
+  [Images and links](/en/writing/assets).
+
+To add an app icon, put `public/icons/icon-192.png` in the repository and add
+it to the manifest:
+
+```json
+"icons": [
+  {
+    "src": "icons/icon-192.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }
+]
+```
+
+The icon `src` is relative. Do not include the repository name. After a
+rebuild, Application → Manifest should preview the icon.
+
+## What to leave alone {id="boundary"}
+
+When you are only replacing content and brand, stay in `docs/` at the
+repository root, and in `website/` under `meta/`, `public/`, and
+`pages/index.tsx`. Change `src/components/` and `src/styles/` when you need a
+different navigation structure, Example position, or component look, and add
+tests for that change.
+
+After a style change, check the home page, a normal document, a long code
+block, and the Example sidebar on a desktop width and a narrow width. Then run
+`npm test -- --runInBand` and `npm run build`. Both succeeding means the brand
+config did not break navigation or the static export.
+
+When the look is done, continue to [Local search](/en/publishing) and confirm
+readers can find these pages.

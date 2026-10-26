@@ -57,9 +57,16 @@ test -f out/sitemap.xml
 ## 部署到 GitHub Pages {id="github-pages"}
 
 模板已包含 `.github/workflows/deploy-pages.yml`。从模板创建自己的仓库后，不需要
-复制额外工作流。推送到 `main` 不会部署。发布一个 GitHub Release，或在
-**Actions** 里手动运行 **Publish GitHub Pages**，工作流才会构建站点、上传
-`website/out`，再发布到 GitHub Pages。
+复制额外工作流。推送到 `main` 不会部署。发布 GitHub Release 后，工作流才构建
+站点、上传 `website/out`，再发布到 GitHub Pages。Release 的说明就是这次更改
+记录。GitHub 会按上一个 Release 之后的提交生成它；第一次发布则列出当前为止的
+提交。
+
+```bash
+gh release create v0.2.0 --generate-notes --title "v0.2.0"
+```
+
+也可以在 **Releases** 页面起草 Release，点 **Generate release notes**，再发布。
 
 准备使用 GitHub Pages 时，仓库需要是公开的。免费套餐不能为私有仓库开启 Pages。
 
@@ -68,8 +75,7 @@ test -f out/sitemap.xml
 1. 使用 **Use this template** 创建仓库，或将模板代码推送到新仓库的 `main`
 2. 打开仓库的 **Settings → Pages**
 3. 在 **Build and deployment** 下将 **Source** 选择为 **GitHub Actions**
-4. 打开 **Releases**，起草并发布一个 Release。也可以在 **Actions** 页面手动运行
-   **Publish GitHub Pages**
+4. 用上面的命令发布一个 Release，或在 **Releases** 页面生成更改记录后发布
 5. 等待 `deploy` job 完成，从工作流页面或 **Settings → Pages** 打开站点
 
 Actions 页面中应依次看到 `build` 和 `deploy` 两个 job 成功。以用户 `acme` 的
@@ -109,8 +115,8 @@ npm run build
 、文档图片都会使用同一前缀。
 
 若 Actions 页面没有工作流，检查文件是否已经存在于默认分支的
-`.github/workflows/` 中，以及仓库是否允许 GitHub Actions 运行。发布 Release
-时，部署的是该标签指向的提交。手动运行时，部署的是所选分支。
+`.github/workflows/` 中，以及仓库是否允许 GitHub Actions 运行。部署的是该
+Release 标签指向的提交，更改记录留在这个 Release 的说明里。
 
 ## 其他托管平台 {id="platforms"}
 

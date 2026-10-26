@@ -65,7 +65,7 @@ npm run preview:search
 | 现象                            | 检查项                                                               |
 | ------------------------------- | -------------------------------------------------------------------- |
 | 开启 Pages 失败，提示套餐不支持 | 仓库是否仍为私有。免费套餐需要先把仓库设为公开                       |
-| 发布后没有工作流                | 文件是否在默认分支的 `.github/workflows/deploy-pages.yml`；是否发布了 Release，或手动运行了 **Publish GitHub Pages** |
+| 发布后没有工作流                | 文件是否在默认分支的 `.github/workflows/deploy-pages.yml`；Release 是否已经发布 |
 | Pages 提示未配置来源            | **Settings → Pages → Source** 是否为 **GitHub Actions**              |
 | workflow 无部署权限             | 仓库 Actions / Pages 策略，以及 `pages: write`、`id-token: write`    |
 | 首页能开，图片或搜索 404        | 构建日志中的 `base_path`，以及是否使用内置 workflow                  |

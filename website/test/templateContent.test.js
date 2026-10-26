@@ -223,7 +223,7 @@ describe('documentation template content', () => {
         expect(workflow).toContain('types: [published]')
         expect(workflow).not.toContain('branches: [main]')
         expect(workflow).toContain('github.event.release.tag_name')
-        expect(workflow).toContain('workflow_dispatch:')
+        expect(workflow).not.toContain('workflow_dispatch:')
         expect(workflow).toContain('pages: write')
         expect(workflow).toContain('id-token: write')
         expect(workflow).toContain('uses: actions/configure-pages@v5')

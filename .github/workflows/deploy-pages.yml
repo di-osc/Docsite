@@ -3,7 +3,6 @@ name: Publish GitHub Pages
 on:
   release:
     types: [published]
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -21,8 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          # 发布 Release 时检出标签；手动运行时检出所选分支。
-          ref: ${{ github.event_name == 'release' && github.event.release.tag_name || github.sha }}
+          ref: ${{ github.event.release.tag_name }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v6

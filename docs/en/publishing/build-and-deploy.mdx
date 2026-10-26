@@ -64,15 +64,15 @@ The template includes `.github/workflows/deploy-pages.yml`. After you create
 your repository from the template, you do not copy another workflow. A push to
 `main` does not deploy. Publishing a GitHub Release builds the site, uploads
 `website/out`, and publishes GitHub Pages. The release notes are the change
-record. GitHub generates them from commits since the previous release. The
-first release lists the commits so far.
+record. The notes list commits since the previous release. The first release
+lists the commits so far.
 
 ```bash
-gh release create v0.2.0 --generate-notes --title "v0.2.0"
+gh release create v0.2.0 --title "v0.2.0" --notes "$(git log --pretty='* %s' "$(git describe --tags --abbrev=0 HEAD^)"..HEAD)"
 ```
 
-You can also draft a release on the **Releases** page, choose **Generate
-release notes**, and publish it.
+You can also draft a release on the **Releases** page, paste that commit
+list into the notes, and publish it.
 
 GitHub Pages on the free plan needs a public repository. A private repository
 cannot enable Pages.
@@ -83,7 +83,7 @@ Set it up in this order:
    `main` on a new repository.
 2. Open **Settings → Pages**.
 3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-4. Publish a release with the command above, or generate the notes on the
+4. Publish a release with the command above, or write the notes on the
    **Releases** page and publish it.
 5. Wait for the `deploy` job, then open the site from the workflow page or
    **Settings → Pages**.

@@ -57,8 +57,9 @@ test -f out/sitemap.xml
 ## 部署到 GitHub Pages {id="github-pages"}
 
 模板已包含 `.github/workflows/deploy-pages.yml`。从模板创建自己的仓库后，不需要
-复制额外工作流。它会在每次推送到 `main` 后构建站点、上传 `website/out`，再发布到
-GitHub Pages。
+复制额外工作流。推送到 `main` 不会部署。发布一个 GitHub Release，或在
+**Actions** 里手动运行 **Publish GitHub Pages**，工作流才会构建站点、上传
+`website/out`，再发布到 GitHub Pages。
 
 准备使用 GitHub Pages 时，仓库需要是公开的。免费套餐不能为私有仓库开启 Pages。
 
@@ -67,7 +68,8 @@ GitHub Pages。
 1. 使用 **Use this template** 创建仓库，或将模板代码推送到新仓库的 `main`
 2. 打开仓库的 **Settings → Pages**
 3. 在 **Build and deployment** 下将 **Source** 选择为 **GitHub Actions**
-4. 再次推送到 `main`，或在 **Actions** 页面手动运行 **Deploy GitHub Pages**
+4. 打开 **Releases**，起草并发布一个 Release。也可以在 **Actions** 页面手动运行
+   **Publish GitHub Pages**
 5. 等待 `deploy` job 完成，从工作流页面或 **Settings → Pages** 打开站点
 
 Actions 页面中应依次看到 `build` 和 `deploy` 两个 job 成功。以用户 `acme` 的
@@ -106,9 +108,9 @@ npm run build
 因此无需手工填写仓库子路径。Next.js 静态资源、PWA manifest 和 Pagefind 搜索结果
 、文档图片都会使用同一前缀。
 
-若默认分支不是 `main`，修改工作流中的 `on.push.branches`。若 Actions 页面没有工
-作流，检查文件是否已经存在于默认分支的 `.github/workflows/` 中，以及仓库是否允许
-GitHub Actions 运行。
+若 Actions 页面没有工作流，检查文件是否已经存在于默认分支的
+`.github/workflows/` 中，以及仓库是否允许 GitHub Actions 运行。发布 Release
+时，部署的是该标签指向的提交。手动运行时，部署的是所选分支。
 
 ## 其他托管平台 {id="platforms"}
 

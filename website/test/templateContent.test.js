@@ -220,7 +220,9 @@ describe('documentation template content', () => {
     test('ships a GitHub Pages workflow with build metadata and deployment permissions', () => {
         const workflow = read('../.github/workflows/deploy-pages.yml')
 
-        expect(workflow).toContain('branches: [main]')
+        expect(workflow).toContain('types: [published]')
+        expect(workflow).not.toContain('branches: [main]')
+        expect(workflow).toContain('github.event.release.tag_name')
         expect(workflow).toContain('workflow_dispatch:')
         expect(workflow).toContain('pages: write')
         expect(workflow).toContain('id-token: write')

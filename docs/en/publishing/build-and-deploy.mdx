@@ -61,9 +61,10 @@ exist.
 ## GitHub Pages {id="github-pages"}
 
 The template includes `.github/workflows/deploy-pages.yml`. After you create
-your repository from the template, you do not copy another workflow. On every
-push to `main` it builds the site, uploads `website/out`, and publishes GitHub
-Pages.
+your repository from the template, you do not copy another workflow. A push to
+`main` does not deploy. Publishing a GitHub Release, or running **Publish
+GitHub Pages** by hand from **Actions**, builds the site, uploads
+`website/out`, and publishes GitHub Pages.
 
 GitHub Pages on the free plan needs a public repository. A private repository
 cannot enable Pages.
@@ -74,8 +75,8 @@ Set it up in this order:
    `main` on a new repository.
 2. Open **Settings → Pages**.
 3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-4. Push to `main` again, or run **Deploy GitHub Pages** by hand from
-   **Actions**.
+4. Open **Releases**, draft a release, and publish it. You can also run
+   **Publish GitHub Pages** by hand from **Actions**.
 5. Wait for the `deploy` job, then open the site from the workflow page or
    **Settings → Pages**.
 
@@ -117,10 +118,10 @@ The workflow reads the real deployment settings with
 You do not type the repository subpath by hand. Next.js assets, the PWA
 manifest, Pagefind results, and document images share that prefix.
 
-If the default branch is not `main`, change `on.push.branches` in the
-workflow. If Actions shows no workflow, confirm the file is on the default
-branch under `.github/workflows/`, and that the repository allows GitHub
-Actions.
+If Actions shows no workflow, confirm the file is on the default branch under
+`.github/workflows/`, and that the repository allows GitHub Actions. A
+published release deploys the tagged commit. A manual run deploys the branch
+you select.
 
 ## Other hosts {id="platforms"}
 

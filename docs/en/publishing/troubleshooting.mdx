@@ -70,7 +70,7 @@ server and run `npm run preview:search`. After Pagefind finishes, search for
 | What you see                              | What to check                                                                 |
 | ----------------------------------------- | ----------------------------------------------------------------------------- |
 | Enabling Pages fails because of the plan  | The repository is still private. The free plan needs a public repository      |
-| Publishing a release does not start       | The file is `.github/workflows/deploy-pages.yml` on the default branch        |
+| A push does not start a workflow          | The file is `.github/workflows/deploy-pages.yml`, and the branch is `main`    |
 | Pages says the source is not configured   | **Settings → Pages → Source** is **GitHub Actions**                           |
 | The workflow cannot deploy                | Actions and Pages policy, plus `pages: write` and `id-token: write`           |
 | The home page works, images or search 404 | `base_path` in the build log, and whether the included workflow ran           |

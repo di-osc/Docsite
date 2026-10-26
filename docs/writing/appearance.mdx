@@ -1,7 +1,7 @@
 ---
 title: 外观定制
 teaser: 修改首页、主题色、字体和站点图标
-section: getting-started
+section: writing
 menu:
   - ["站点身份", "identity"]
   - ["首页内容", "homepage"]
@@ -10,8 +10,8 @@ menu:
   - ["定制边界", "boundary"]
 ---
 
-模板把常用品牌信息放在配置和首页中，通常不需要修改组件逻辑。建议先完成文字和颜色
-替换，再决定是否深入调整布局。
+上一页定好了大章节。这一页改首页、颜色和图标。这些信息都在配置和首页里，通常不
+需要修改组件逻辑。先换文字和颜色，再决定要不要调整布局。
 
 ## 站点身份 {id="identity"}
 
@@ -76,8 +76,6 @@ rg 'Documentation Template|Docs Template|Your Organization|your-org|example\.com
 说明，`LandingCard` 用于放置最重要的入口。下面的完整代码可以替换原有
 `<LandingGrid blocks>...</LandingGrid>`：
 
-<Aside title="Example">
-
 ```tsx
 <LandingGrid blocks>
   <LandingCard title="快速开始" url="/guide" button="开始使用">
@@ -88,8 +86,6 @@ rg 'Documentation Template|Docs Template|Your Organization|your-org|example\.com
   </LandingCard>
 </LandingGrid>
 ```
-
-</Aside>
 
 入口卡片应指向真实页面。首页适合回答“这是什么、能做什么、下一步去哪”，详细操作步
 骤放到文档页，避免首页变成长手册。保存后，首页应出现两张并排卡片，窄屏时自动改为
@@ -157,3 +153,5 @@ rg 'Documentation Template|Docs Template|Your Organization|your-org|example\.com
 每次修改样式后，至少在桌面和窄屏各检查一次首页、普通文档页、长代码块和 Example
 侧栏。最后运行 `npm test -- --runInBand` 和 `npm run build`；二者都成功才说明品
 牌配置没有破坏导航或静态导出。
+
+外观改完后，继续 [本地搜索](/publishing)，确认读者能找到这些页面。

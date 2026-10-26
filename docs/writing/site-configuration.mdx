@@ -1,19 +1,23 @@
 ---
 title: 站点配置
-teaser: 用相互匹配的配置和页面建立 Acme SDK 文档结构
-section: getting-started
+teaser: 新增一个大章节，并让配置和页面使用同一个名字
+section: writing
 menu:
   - ["配置文件", "locations"]
   - ["字段参考", "fields"]
   - ["配置关系", "relationships"]
   - ["完整配置示例", "example"]
   - ["创建入口页面", "documents"]
+  - ["再加一篇页面", "child-page"]
   - ["验证结果", "verify"]
 ---
 
-上一页已经启动模板。本页以 “Acme SDK” 为例，在保留模板使用手册的同时新增“产品指
-南”大章节。这样每一步都能运行测试和预览；等自己的内容迁移完成后，再一起删除不需
-要的模板手册及其导航。
+前面几页已经会写页面、组件和图片。这一页改的是整站：大章节、顶部导航和侧边栏。
+示例仍用虚构产品 Acme SDK，代表你自己的产品文档。
+
+这一页保留现有使用手册，再为它增加“产品指南”大章节。配置和页面使用同一个章节名
+，站点才能把它们连起来。每一步都可以运行测试和预览。自己的内容写好之后，再删除不
+需要的模板手册和对应导航。
 
 ## 配置文件 {id="locations"}
 
@@ -29,7 +33,7 @@ menu:
 
 最常修改的是前两个 JSON 文件。类型映射会在
 [MDX 组件](/writing/mdx-components#type-annotations) 中用实际效果解释，首页和
-manifest 则放到下一页 [外观定制](/getting-started/appearance)。
+manifest 则放到下一页 [外观定制](/writing/appearance)。
 
 ## 字段参考 {id="fields"}
 
@@ -142,6 +146,47 @@ menu:
 保存后，顶部“产品指南”打开 `/guide`，左侧显示“开始使用 → 指南概览”。如果只写配置
 而不创建这个文件，测试会明确报告侧边栏 URL 找不到页面。
 
+## 再加一篇页面 {id="child-page"}
+
+入口页能打开之后，再用 [添加与组织文档](/writing#create-page) 里的方法给这一章加
+第二篇。创建 `docs/guide/installation.mdx`：
+
+````mdx
+---
+title: 安装
+teaser: 安装 Acme SDK 并验证环境
+section: guide
+menu:
+  - ["安装依赖", "install"]
+  - ["验证安装", "verify"]
+---
+
+## 安装依赖 {id="install"}
+
+```bash
+npm install @acme/sdk
+```
+
+## 验证安装 {id="verify"}
+
+安装完成后运行项目测试，确认 SDK 可以被正常导入。
+````
+
+然后只改 `guide` 那一组的 `items`，在“指南概览”后面加上“安装”：
+
+```json
+{
+  "label": "开始使用",
+  "items": [
+    { "text": "指南概览", "url": "/guide" },
+    { "text": "安装", "url": "/guide/installation" }
+  ]
+}
+```
+
+保存后，`/guide/installation` 能打开。左侧“开始使用”里先是“指南概览”，再是“安装”
+。页首是“安装”，右侧有“安装依赖”和“验证安装”。
+
 后续新增“API”等大章节时，重复同样的四步：增加 section、增加顶部入口、增加侧边栏
 对象、创建入口 MDX。不要一次删除模板手册；确认自己的页面已经覆盖所需说明后，再同
 时删除对应 `docs/` 目录、`sections`、`navigation` 和侧边栏对象。
@@ -158,9 +203,9 @@ npm run build
 预期结果：
 
 - 测试不报告 section、frontmatter、sidebar URL 或 menu 锚点错误。
-- 构建生成 `/guide` 静态页面。
+- 构建生成 `/guide` 和 `/guide/installation`。
 - 右上角新增“产品指南”，原有模板手册入口仍然可用。
-- 打开“产品指南”时使用绿色主题，左侧只显示该章节的小页面。
+- 打开“产品指南”时使用绿色主题，左侧先是“指南概览”，再是“安装”。
 
-配置结构完成后，继续 [外观定制](/getting-started/appearance)，同步修改首页和
+配置结构完成后，继续 [外观定制](/writing/appearance)，同步修改首页和
 manifest。

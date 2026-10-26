@@ -3,25 +3,26 @@ title: 图片与链接
 teaser: 用真实资源示例掌握图片、站内链接和下载文件
 section: writing
 menu:
-  - ['静态资源目录', 'public']
-  - ['插入图片', 'images']
-  - ['编写链接', 'links']
-  - ['GitHub Pages 子路径', 'base-path']
-  - ['检查清单', 'checklist']
+  - ["静态资源目录", "public"]
+  - ["插入图片", "images"]
+  - ["编写链接", "links"]
+  - ["GitHub Pages 子路径", "base-path"]
+  - ["检查清单", "checklist"]
 ---
 
-上一页介绍了 MDX 组件，本页继续使用标准 Markdown。图片和下载文件放在 `public/`，
-文档中使用从站点根目录开始的 URL。示例资源已经包含在模板中，可以直接查看效果。
+上一页介绍了 MDX 组件，本页继续使用标准 Markdown。图片和下载文件放在
+`website/public/`，文档中使用从站点根目录开始的 URL。示例资源已经包含在模板中，
+可以直接查看效果。
 
 ## 静态资源目录 {id="public"}
 
-`public/` 是静态资源根目录：构建时其中的文件会原样复制到 `out/`，公开 URL 不包含
-`public` 这一层。
+`website/public/` 是静态资源根目录。在 `website/` 里构建时，其中的文件会原样复制
+到 `website/out/`，公开 URL 不包含 `public` 这一层。
 
 示例目录：
 
 ```text
-public/
+website/public/
 ├── images/
 │   └── example-diagram.svg
 └── manifest.webmanifest
@@ -30,8 +31,8 @@ public/
 因此：
 
 ```text
-public/images/example-diagram.svg → /images/example-diagram.svg
-public/manifest.webmanifest       → /manifest.webmanifest
+website/public/images/example-diagram.svg → /images/example-diagram.svg
+website/public/manifest.webmanifest       → /manifest.webmanifest
 ```
 
 预期结果是左边的文件路径在源码中存在，右边的 URL 能在开发服务器和静态站点中访问
@@ -56,8 +57,8 @@ public/manifest.webmanifest       → /manifest.webmanifest
 
 <Infobox title="资源应随仓库保存">
 
-外部 HTTPS 图片也能显示，但重要文档资源建议放入 `public/`，避免第三方地址失效或
-阻止跨站加载。
+外部 HTTPS 图片也能显示。重要文档资源放入 `website/public/`，这样地址跟着仓库走
+，不会因为第三方链接失效而打不开。
 
 </Infobox>
 
@@ -90,14 +91,14 @@ public/manifest.webmanifest       → /manifest.webmanifest
 ![流程图](/images/example-diagram.svg)
 ```
 
-当构建变量为 `NEXT_PUBLIC_BASE_PATH=/libraries` 时，模板输出：
+当构建变量为 `NEXT_PUBLIC_BASE_PATH=/docs` 时，模板输出：
 
 ```text
-/libraries/images/example-diagram.svg
+/docs/images/example-diagram.svg
 ```
 
-外链、`data:` URL、相对路径和已经带部署前缀的 URL 不会被重复修改。内置 GitHub
-Actions 会自动设置这个变量；其他子路径托管环境可这样验证：
+外链、`data:` URL、相对路径和已经带部署前缀的 URL 会保持原样。内置 GitHub
+Actions 会自动设置这个变量。其他子路径托管环境在 `website/` 目录这样验证：
 
 ```bash
 NEXT_PUBLIC_BASE_PATH=/docs \
@@ -105,8 +106,8 @@ SITE_URL=https://example.com/docs \
 npm run build
 ```
 
-构建成功后，在 `out/writing/assets.html` 中应能看到带 `/docs/images/` 前缀的图片
-地址。
+构建成功后，在 `website/out/writing/assets.html` 中应能看到带 `/docs/images/` 前
+缀的图片地址。
 
 ## 检查清单 {id="checklist"}
 
@@ -115,8 +116,9 @@ npm run build
 - 开发环境和生产构建都能显示图片。
 - 图片替代文本能独立说明信息，尺寸不会撑破正文。
 - 站内链接没有 `.mdx` 或 `.html` 后缀。
-- 外部链接使用 HTTPS，下载文件真实存在于 `public/`。
+- 外部链接使用 HTTPS，下载文件真实存在于 `website/public/`。
 - 子路径构建后，图片、manifest 和搜索资源使用同一个前缀。
 
-至此，内容编写流程已经完成。下一步进入 [本地搜索](/publishing)，验证读者能否找到
-刚刚添加的页面。
+页面、组件和图片到这里就够用了。接下来的 [站点配置](/writing/site-configuration)
+和 [外观定制](/writing/appearance) 改的是整站名称、大章节和首页。搜索放到后面的
+[发布](/publishing)。

@@ -1,168 +1,133 @@
 ---
 title: 添加与组织文档
-teaser: 用 docs/ 与 sidebars.json 组织分区、页面和阅读顺序
+teaser: 把已经写好的页面放进左侧导航，再增加下一篇
 section: writing
 menu:
-  - ['路由规则', 'routes']
-  - ['创建页面', 'create-page']
-  - ['配置 Frontmatter', 'frontmatter']
-  - ['加入侧边栏', 'sidebars']
-  - ['新增分区', 'new-section']
-  - ['重命名或删除', 'rename-delete']
-  - ['验证结果', 'verify']
+  - ["路由规则", "routes"]
+  - ["加入侧边栏", "sidebars"]
+  - ["配置 Frontmatter", "frontmatter"]
+  - ["再写一页", "create-page"]
+  - ["新增大章节", "new-section"]
+  - ["重命名或删除", "rename-delete"]
+  - ["验证结果", "verify"]
 ---
 
-文档内容放在 `docs/`，页面出现在哪、按什么顺序阅读，由 `meta/sidebars.json` 决定
-。本页沿用 [站点配置](/getting-started/site-configuration) 中已经创建的 `guide`
-分区，从新增“安装”页面开始，完成内容、路由、导航和验证的完整闭环。
+[快速开始](/getting-started/quickstart#first-page) 里的
+`docs/getting-started/hello.mdx` 已经能用地址打开，左侧还没有它。这一页先把它放进
+“入门”。组件和图片在后面两页。新的大章节、站点名称和首页外观再往后。
 
 ## 路由规则 {id="routes"}
+
+文件放在哪个目录、叫什么名字，决定它的地址：
 
 | 文件                        | 路由                |
 | --------------------------- | ------------------- |
 | `docs/<section>/index.mdx`  | `/<section>`        |
 | `docs/<section>/<page>.mdx` | `/<section>/<page>` |
 
-例如：
+你刚创建的文件就是这条规则：
+
+- `docs/getting-started/hello.mdx` → `/getting-started/hello`
+
+本手册自己的页面也一样：
 
 - `docs/writing/index.mdx` → `/writing`
 - `docs/writing/mdx-components.mdx` → `/writing/mdx-components`
 
-文件系统顺序不会影响导航。`index.mdx` 是分区入口，其余文件名会直接成为 URL 的一
-部分，建议使用小写英文和连字符。
-
-<Aside title="Example">
-
-```text
-docs/guide/index.mdx        → /guide
-docs/guide/installation.mdx → /guide/installation
-```
-
-</Aside>
-
-## 创建页面 {id="create-page"}
-
-创建 `docs/guide/installation.mdx`，写入完整页面：
-
-````mdx
----
-title: 安装
-teaser: 安装 Acme SDK 并验证环境
-section: guide
-menu:
-  - ['安装依赖', 'install']
-  - ['验证安装', 'verify']
----
-
-## 安装依赖 {id="install"}
-
-```bash
-npm install @acme/sdk
-```
-
-## 验证安装 {id="verify"}
-
-安装完成后运行项目测试，确认 SDK 可以被正常导入。
-````
-
-保存文件后，开发服务器会生成 `/guide/installation`。此时直接输入 URL 可以打开页
-面，但左侧导航还没有入口；下一步用 frontmatter 和侧边栏把它接入阅读路径。
-
-## 配置 Frontmatter {id="frontmatter"}
-
-每个 MDX 页面开头需要 frontmatter：
-
-<Aside title="Example">
-
-```yaml
----
-title: 安装
-teaser: 安装 Acme SDK 并验证环境
-section: guide
-menu:
-  - ['安装依赖', 'install']
-  - ['验证安装', 'verify']
----
-```
-
-</Aside>
-
-含义如下：
-
-- `title`：页面标题。
-- `teaser`：页面摘要，出现在页面头部说明中。
-- `section`：所属分区，必须与目录名和 `site.json.sections[].id` 一致。
-- `menu`：可选，右侧小目录；每一项是 `[显示文本, 锚点 id]`。
-
-每个 `menu` id 都必须在正文的 `##` 标题上明确声明，例如
-`## 安装依赖 {id="install"}`。显示文字可以不同，但 id 必须完全相同且在页面内唯一
-。模板测试会检查缺失锚点。
-
-预期页面顶部显示 `title` 和 `teaser`，右侧显示“安装依赖”“验证安装”两个小节链接。
-点击链接后，URL 分别带上 `#install` 和 `#verify`。
+文件系统顺序不会影响导航。`index.mdx` 是大章节入口，其余文件名会直接成为 URL 的
+一部分，建议使用小写英文和连字符。
 
 ## 加入侧边栏 {id="sidebars"}
 
-`meta/sidebars.json` 同时控制：
+`website/meta/sidebars.json` 同时控制：
 
 - 左侧导航的分组与页面顺序
 - 文档页底部的“下一篇”顺序
 
-把新页面加入对应 section 的分组：
-
-```json
-[
-  {
-    "section": "guide",
-    "items": [
-      {
-        "label": "开始使用",
-        "items": [
-          { "text": "概览", "url": "/guide" },
-          { "text": "安装", "url": "/guide/installation" }
-        ]
-      }
-    ]
-  }
-]
-```
-
-`text` 是左侧显示文字，`url` 是页面路由。一个 section 可以有多个带 `label` 的分
-组。数组顺序就是左侧顺序，也是页底“下一篇”的阅读顺序。
-
-保存后，左侧“开始使用”分组中应依次出现“概览”和“安装”，概览页底的“下一篇”应指向安
-装页。
-
-## 新增分区 {id="new-section"}
-
-新增页面只修改文档和侧边栏；新增大章节还要连接顶部导航。以 `api` 分区为例，需要
-完成五步：
-
-1. 创建 `docs/api/index.mdx`，并设置 `section: api`。
-2. 在 `meta/site.json.sections` 中声明 `{ "id": "api", ... }`。
-3. 在 `meta/site.json.navigation` 中加入 `/api`，让它显示在右上角。
-4. 在 `meta/sidebars.json` 中新增 `"section": "api"` 的完整导航。
-5. 按需在首页卡片和页脚中加入入口。
-
-section id、目录名、frontmatter 和 sidebar section 四处必须一致。
-
-<Aside title="Example">
+打开这个文件，找到 `"section": "getting-started"`。在“快速开始”后面加上“你好”。
+只改这一组的 `items`，不要替换整个文件，否则“编写”“发布”会从左侧导航消失：
 
 ```json
 {
-  "section": "api",
+  "label": "入门",
   "items": [
-    {
-      "label": "API 参考",
-      "items": [{ "text": "API 概览", "url": "/api" }]
-    }
+    { "text": "模板概览", "url": "/getting-started" },
+    { "text": "快速开始", "url": "/getting-started/quickstart" },
+    { "text": "你好", "url": "/getting-started/hello" }
   ]
 }
 ```
 
-</Aside>
+`text` 是左侧显示文字，`url` 是页面路由。数组顺序就是左侧顺序，也是页底“下一篇”
+的阅读顺序。
 
-完成后，右上角出现“API”，点击后进入 `/api`，左侧只显示 API 分区自己的页面。
+保存后刷新。左侧“入门”里应依次出现“模板概览”“快速开始”“你好”，快速开始页底的
+“下一篇”应指向你好。
+
+## 配置 Frontmatter {id="frontmatter"}
+
+`title`、`teaser` 和 `section` 在快速开始里已经用过。这一步给你好页加上 `menu`
+，它是页面右侧的小目录。把 `docs/getting-started/hello.mdx` 改成：
+
+```mdx
+---
+title: 你好
+teaser: 我的第一篇文档
+section: getting-started
+menu:
+  - ["下一句", "next"]
+---
+
+用 Markdown 写正文即可。
+
+## 下一句 {id="next"}
+
+这一节会出现在页面右侧。
+```
+
+字段含义如下：
+
+- `title`：页面标题。
+- `teaser`：页面摘要，出现在页面头部说明中。
+- `section`：所属大章节，必须与目录名和 `website/meta/site.json` 里的
+  `sections[].id` 一致。
+- `menu`：可选，右侧小目录；每一项是 `[显示文本, 锚点 id]`。
+
+每个 `menu` id 都必须在正文的 `##` 标题上明确声明，例如
+`## 下一句 {id="next"}`。显示文字可以不同，但 id 必须完全相同且在页面内唯一。模板
+测试会检查缺失锚点。
+
+刷新 `/getting-started/hello`。页首仍是“你好”，右侧应出现“下一句”。点击后 URL 带上
+`#next`。
+
+## 再写一页 {id="create-page"}
+
+同一章里再加一页，重复刚才的两步：先写文件，再放进同一组 `items`。
+
+创建 `docs/getting-started/notes.mdx`：
+
+```mdx
+---
+title: 笔记
+teaser: 记在入门里的第二篇
+section: getting-started
+---
+
+这里可以继续写。
+```
+
+然后在“你好”后面加上 `{ "text": "笔记", "url": "/getting-started/notes" }`。
+
+保存后，`/getting-started/notes` 能打开，左侧“你好”的下一篇是“笔记”。
+
+## 新增大章节 {id="new-section"}
+
+上面的步骤只改了已有的“入门”：一篇 MDX，再加一条侧边栏。
+
+新的大章节还要出现在右上角，所以还要改 `website/meta/site.json` 的 `sections` 和
+`navigation`，并在 `website/meta/sidebars.json` 末尾增加一组。完整例子在后面的
+[站点配置](/writing/site-configuration)，用虚构产品的“产品指南”走一遍。这一页先不
+做。
 
 ## 重命名或删除 {id="rename-delete"}
 
@@ -170,41 +135,37 @@ section id、目录名、frontmatter 和 sidebar section 四处必须一致。
 
 1. 重命名 MDX 文件。
 2. 修改侧边栏 URL，以及正文、首页和页脚中指向旧 URL 的链接。
-3. 如果改了 section id，修改目录、所有页面 frontmatter、站点配置和侧边栏。
+3. 如果改了 section id，还要改目录、所有页面 frontmatter、站点配置和侧边栏。
 
 删除页面时先从侧边栏移除链接，再删除文件。模板不会自动为旧 URL 生成重定向；已经
 公开的文档若需要兼容旧地址，应在托管平台配置重定向，或暂时保留说明页。
 
-完整重命名示例：
+例如把笔记页改名，在仓库根目录运行。`docs/` 在仓库根目录，`meta/` 和 `pages/` 在
+`website/` 里：
 
 ```bash
-git mv docs/guide/installation.mdx docs/guide/setup.mdx
-rg "/guide/installation" docs meta pages
+git mv docs/getting-started/notes.mdx docs/getting-started/setup.mdx
+rg "/getting-started/notes" docs website/meta website/pages
 ```
 
-把搜索结果中的旧链接全部改为 `/guide/setup`，再运行测试。预期测试不再报告旧
-sidebar URL，浏览器能打开新地址。若删除页面，则先删除侧边栏条目，再用 Git 删除
-MDX 文件。
+把搜索结果中的旧链接全部改为 `/getting-started/setup`，再运行测试。预期测试不再
+报告旧 sidebar URL，浏览器能打开新地址。
 
 ## 验证结果 {id="verify"}
 
-<Aside title="Example">
+在 `website/` 目录运行：
 
 ```bash
 npm test -- --runInBand
 npm run build
 ```
 
-</Aside>
+然后打开 `/getting-started/hello` 并检查：
 
-然后打开新路由并检查：
-
-- 页面标题和摘要正确。
-- 左侧链接高亮，前后页面顺序符合预期。
-- 右侧目录点击后滚动到正确标题。
+- 页面标题是“你好”，摘要是“我的第一篇文档”。
+- 左侧“入门”里能看到它，顺序和 `sidebars.json` 一致。
+- 右侧“下一句”点击后滚动到对应标题。
 - 直接刷新页面仍能打开。
-- 搜索预览能够找到新页面。
 
-以上检查都通过后，页面才算真正接入站点。下一页
-[MDX 组件](/writing/mdx-components) 会在这个页面结构上加入提示框、按钮、折叠区和
-Example。
+以上都通过后，这一页才算接进站点。下一页
+[MDX 组件](/writing/mdx-components) 在这个页面上加入提示框、按钮和折叠区。

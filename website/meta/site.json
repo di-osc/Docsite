@@ -4,8 +4,8 @@
     "description": "使用 MDX 编写、可静态导出并带有本地搜索的文档站模板。",
     "slogan": "Build clear documentation with MDX",
     "company": "Your Organization",
-    "companyUrl": "https://github.com/your-org",
-    "repo": "your-org/documentation-template",
+    "companyUrl": "https://github.com/di-osc",
+    "repo": "di-osc/Docsite",
     "theme": "#09a3d5",
     "sections": [
         { "id": "getting-started", "title": "入门", "theme": "blue" },
@@ -31,7 +31,7 @@
             "items": [
                 {
                     "text": "模板仓库",
-                    "url": "https://github.com/your-org/documentation-template"
+                    "url": "https://github.com/di-osc/Docsite"
                 }
             ]
         }

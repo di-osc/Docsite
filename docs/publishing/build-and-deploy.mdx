@@ -3,29 +3,26 @@ title: 构建与部署
 teaser: 运行测试、导出静态站点并部署到托管平台
 section: publishing
 menu:
-  - ['发布前检查', 'checks']
-  - ['生产构建', 'build']
-  - ['部署到 GitHub Pages', 'github-pages']
-  - ['其他托管平台', 'platforms']
-  - ['环境变量', 'environment']
-  - ['上线后验收', 'acceptance']
+  - ["发布前检查", "checks"]
+  - ["生产构建", "build"]
+  - ["部署到 GitHub Pages", "github-pages"]
+  - ["其他托管平台", "platforms"]
+  - ["环境变量", "environment"]
+  - ["上线后验收", "acceptance"]
 ---
 
-模板输出的是静态站点。只要 `out/` 构建成功，就可以部署到支持静态文件的平台。
+模板输出的是静态站点。在 `website/` 目录构建成功后，部署目录是 `website/out/`
+，可以部署到支持静态文件的平台。本页命令都在 `website/` 目录执行。
 
 ## 发布前检查 {id="checks"}
 
-建议按顺序执行：
-
-<Aside title="Example">
+按顺序执行：
 
 ```bash
 npm test -- --runInBand
 npm run lint
 npm run build
 ```
-
-</Aside>
 
 - `npm test`：验证文档结构、配置和关键约束。
 - `npm run lint`：检查 TypeScript / React 代码。
@@ -44,12 +41,10 @@ npm run build
 
 1. 执行 Next.js 构建与静态导出
 2. 生成 sitemap
-3. 用 Pagefind 为 `out/` 建立搜索索引
-
-在 `website/` 中构建时，部署目录是 `website/out/`。
+3. 用 Pagefind 为 `website/out/` 建立搜索索引
 
 成功时应同时满足三项：Next.js 报告静态页面已生成，Pagefind 报告已索引页面，命令
-以退出码 0 结束。随后可以检查关键产物：
+以退出码 0 结束。随后在同一目录检查关键产物：
 
 ```bash
 test -f out/index.html
@@ -62,8 +57,10 @@ test -f out/sitemap.xml
 ## 部署到 GitHub Pages {id="github-pages"}
 
 模板已包含 `.github/workflows/deploy-pages.yml`。从模板创建自己的仓库后，不需要
-复制额外工作流；它会在每次推送到 `main` 后构建站点、上传 `out/`，再发布到 GitHub
-Pages。
+复制额外工作流。它会在每次推送到 `main` 后构建站点、上传 `website/out`，再发布到
+GitHub Pages。
+
+准备使用 GitHub Pages 时，仓库需要是公开的。免费套餐不能为私有仓库开启 Pages。
 
 首次部署按下面的顺序设置：
 
@@ -75,8 +72,6 @@ Pages。
 
 Actions 页面中应依次看到 `build` 和 `deploy` 两个 job 成功。以用户 `acme` 的
 `sdk-docs` 仓库为例，最终地址应是 `https://acme.github.io/sdk-docs/`。
-
-<Aside title="Example">
 
 普通仓库 `docs-template` 的地址是：
 
@@ -90,8 +85,6 @@ https://<用户名>.github.io/<仓库名>/
 https://<用户名>.github.io/
 ```
 
-</Aside>
-
 本地验证同一子路径时，把示例值替换成自己的仓库：
 
 ```bash
@@ -100,7 +93,8 @@ SITE_URL=https://acme.github.io/sdk-docs \
 npm run build
 ```
 
-构建后打开 `out/sitemap.xml`，URL 应以 `https://acme.github.io/sdk-docs/` 开头；
+构建后打开 `website/out/sitemap.xml`，URL 应以 `https://acme.github.io/sdk-docs/`
+开头；
 生成的页面资源链接应包含 `/sdk-docs/_next/`。
 
 工作流通过 `actions/configure-pages` 读取当前仓库的真实部署信息，并在构建时注入
@@ -133,15 +127,11 @@ GitHub Actions 运行。
 部署在域名根路径时不设置 `NEXT_PUBLIC_BASE_PATH`。只有站点位于
 `https://example.com/docs/` 这类子路径时，才设置 `/docs`。
 
-<Aside title="Example">
-
 ```bash
 NEXT_PUBLIC_BASE_PATH=/docs \
 SITE_URL=https://example.com/docs \
 npm run build
 ```
-
-</Aside>
 
 ## 环境变量 {id="environment"}
 

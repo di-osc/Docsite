@@ -6,15 +6,7 @@
                 "label": "入门",
                 "items": [
                     { "text": "模板概览", "url": "/getting-started" },
-                    { "text": "快速开始", "url": "/getting-started/quickstart" },
-                    {
-                        "text": "站点配置",
-                        "url": "/getting-started/site-configuration"
-                    },
-                    {
-                        "text": "外观定制",
-                        "url": "/getting-started/appearance"
-                    }
+                    { "text": "快速开始", "url": "/getting-started/quickstart" }
                 ]
             }
         ]
@@ -27,7 +19,9 @@
                 "items": [
                     { "text": "添加与组织文档", "url": "/writing" },
                     { "text": "MDX 组件", "url": "/writing/mdx-components" },
-                    { "text": "图片与链接", "url": "/writing/assets" }
+                    { "text": "图片与链接", "url": "/writing/assets" },
+                    { "text": "站点配置", "url": "/writing/site-configuration" },
+                    { "text": "外观定制", "url": "/writing/appearance" }
                 ]
             }
         ]

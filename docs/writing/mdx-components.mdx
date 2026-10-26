@@ -3,15 +3,15 @@ title: MDX 组件
 teaser: 从源码到实际效果使用模板内置的写作组件
 section: writing
 menu:
-  - ['使用方式', 'principles']
-  - ['Infobox', 'infobox']
-  - ['Button', 'button']
-  - ['Accordion', 'accordion']
-  - ['Grid', 'grid']
-  - ['Aside', 'aside']
-  - ['Tag', 'tag']
-  - ['类型标注', 'type-annotations']
-  - ['Markdown 能力', 'markdown']
+  - ["使用方式", "principles"]
+  - ["Infobox", "infobox"]
+  - ["Button", "button"]
+  - ["Accordion", "accordion"]
+  - ["Grid", "grid"]
+  - ["Aside", "aside"]
+  - ["Tag", "tag"]
+  - ["类型标注", "type-annotations"]
+  - ["Markdown 能力", "markdown"]
 ---
 
 模板把常用写作组件注册到了 MDX 运行时。在 `docs/**/*.mdx` 中可以直接写组件标签，
@@ -179,7 +179,7 @@ npm run dev
 </Aside>
 ````
 
-实际效果：
+实际效果（右侧 EXAMPLE）：
 
 <Aside title="Example">
 
@@ -214,8 +214,11 @@ npm run dev
 
 ## 类型标注 {id="type-annotations"}
 
-双波浪线语法会渲染成行内类型标注，而不是删除线。类型名称存在于
-`meta/type-annotations.json` 时，还会自动链接到对应参考页面。
+双波浪线语法会渲染成行内类型标注，而不是删除线。类型名称写在
+`website/meta/type-annotations.json` 里时，还会自动链接到对应参考页面。
+
+下面用虚构产品 Acme SDK 的类型名演示。`AcmeClient` 是这个示例里的客户端类型，用来
+展示标注怎样链到参考页。
 
 源码：
 

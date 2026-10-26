@@ -1,6 +1,7 @@
 {
     "title": "Documentation Template",
-    "description": "一个支持 MDX、静态导出和本地搜索的中文文档站模板。",
+    "lang": "zh-CN",
+    "description": "使用 MDX 编写、可静态导出并带有本地搜索的文档站模板。",
     "slogan": "Build clear documentation with MDX",
     "company": "Your Organization",
     "companyUrl": "https://github.com/your-org",

@@ -3,19 +3,19 @@
 quickstart-training-generator.js
 
 # dependencies
-/node_modules
-/.pnp
+node_modules
+.pnp
 .pnp.js
 
 # testing
-/coverage
+coverage
 
 # next.js
-/.next/
-/out/
+.next/
+out/
 
 # production
-/build
+build
 
 # misc
 .DS_Store
@@ -38,9 +38,9 @@ yarn-error.log*
 next-env.d.ts
 
 !.vscode/extensions.json
-!public
+!**/public
 
-public/robots.txt
-public/sitemap*
-public/sw.js*
-public/workbox*
+**/public/robots.txt
+**/public/sitemap*
+**/public/sw.js*
+**/public/workbox*

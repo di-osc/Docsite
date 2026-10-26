@@ -3,11 +3,11 @@ title: 外观定制
 teaser: 修改首页、主题色、字体和站点图标
 section: getting-started
 menu:
-  - ['站点身份', 'identity']
-  - ['首页内容', 'homepage']
-  - ['章节主题', 'themes']
-  - ['字体与图标', 'assets']
-  - ['定制边界', 'boundary']
+  - ["站点身份", "identity"]
+  - ["首页内容", "homepage"]
+  - ["章节主题", "themes"]
+  - ["字体与图标", "assets"]
+  - ["定制边界", "boundary"]
 ---
 
 模板把常用品牌信息放在配置和首页中，通常不需要修改组件逻辑。建议先完成文字和颜色
@@ -39,7 +39,8 @@ rg 'Documentation Template|Docs Template|Your Organization|your-org|example\.com
 ```json
 {
   "title": "Acme SDK",
-  "description": "Acme SDK 中文使用文档。",
+  "lang": "en",
+  "description": "Documentation for the Acme SDK.",
   "slogan": "Build with Acme",
   "company": "Acme",
   "companyUrl": "https://acme.example",
@@ -60,7 +61,7 @@ rg 'Documentation Template|Docs Template|Your Organization|your-org|example\.com
   "display": "minimal-ui",
   "scope": ".",
   "start_url": ".",
-  "name": "Acme SDK 中文文档",
+  "name": "Acme SDK Docs",
   "short_name": "Acme SDK"
 }
 ```
@@ -149,8 +150,8 @@ rg 'Documentation Template|Docs Template|Your Organization|your-org|example\.com
 
 ## 定制边界 {id="boundary"}
 
-只替换内容和品牌时，优先停留在 `docs/`、`meta/`、`public/` 和
-`pages/index.tsx`。需要改变导航结构、Example 位置或组件视觉时，再修改
+只替换内容和品牌时，优先停留在仓库根目录的 `docs/`，以及 `website/` 中的
+`meta/`、`public/` 和 `pages/index.tsx`。需要改变导航结构、Example 位置或组件视觉时，再修改
 `src/components/` 和 `src/styles/`，并补充对应测试。
 
 每次修改样式后，至少在桌面和窄屏各检查一次首页、普通文档页、长代码块和 Example

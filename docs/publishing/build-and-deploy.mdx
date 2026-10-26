@@ -46,7 +46,7 @@ npm run build
 2. 生成 sitemap
 3. 用 Pagefind 为 `out/` 建立搜索索引
 
-部署目录始终是仓库根目录下的 `out/`。
+在 `website/` 中构建时，部署目录是 `website/out/`。
 
 成功时应同时满足三项：Next.js 报告静态页面已生成，Pagefind 报告已索引页面，命令
 以退出码 0 结束。随后可以检查关键产物：
@@ -118,16 +118,17 @@ GitHub Actions 运行。
 
 ## 其他托管平台 {id="platforms"}
 
-模板输出纯静态文件，平台的核心设置都是构建命令 `npm run build` 和发布目录
-`out`：
+模板输出纯静态文件。把托管项目的根目录设为 `website` 后，构建命令仍是
+`npm run build`，发布目录仍是 `out`。GitHub Pages 使用仓库根目录的工作流，产物路
+径是 `website/out`。
 
-| 平台             | 构建命令        | 发布目录       | 额外说明                              |
-| ---------------- | --------------- | -------------- | ------------------------------------- |
-| GitHub Pages     | 工作流内置      | `out`          | 自动注入仓库子路径和站点 URL          |
-| Vercel           | `npm run build` | `out`          | 仓库已有 `vercel.json` 和 `cleanUrls` |
-| Cloudflare Pages | `npm run build` | `out`          | 设置 Node.js 24 和 `SITE_URL`         |
-| Netlify          | `npm run build` | `out`          | 设置 Node.js 24 和 `SITE_URL`         |
-| 对象存储 / CDN   | 本地或 CI 构建  | 上传整个 `out` | 托管端需支持目录式 clean URL          |
+| 平台             | 构建命令        | 发布目录       | 额外说明                                              |
+| ---------------- | --------------- | -------------- | ----------------------------------------------------- |
+| GitHub Pages     | 工作流内置      | `website/out`  | 自动注入仓库子路径和站点 URL                          |
+| Vercel           | `npm run build` | `out`          | 根目录设为 `website`，配置见 `website/vercel.json`    |
+| Cloudflare Pages | `npm run build` | `out`          | 根目录设为 `website`，并设置 Node.js 24 和 `SITE_URL` |
+| Netlify          | `npm run build` | `out`          | 根目录设为 `website`，并设置 Node.js 24 和 `SITE_URL` |
+| 对象存储 / CDN   | 本地或 CI 构建  | 上传整个 `out` | 托管端需支持目录式 clean URL                          |
 
 部署在域名根路径时不设置 `NEXT_PUBLIC_BASE_PATH`。只有站点位于
 `https://example.com/docs/` 这类子路径时，才设置 `/docs`。

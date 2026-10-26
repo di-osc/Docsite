@@ -24,17 +24,20 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version-file: .nvmrc
+          node-version-file: website/.nvmrc
           cache: npm
+          cache-dependency-path: website/package-lock.json
 
       - name: Configure GitHub Pages
         id: pages
         uses: actions/configure-pages@v5
 
       - name: Install dependencies
+        working-directory: website
         run: npm ci
 
       - name: Build static site
+        working-directory: website
         env:
           NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
           SITE_URL: ${{ steps.pages.outputs.base_url }}
@@ -43,7 +46,7 @@ jobs:
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./out
+          path: website/out
 
   deploy:
     environment:

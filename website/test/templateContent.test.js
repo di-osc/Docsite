@@ -1,16 +1,25 @@
 const fs = require('node:fs')
 const path = require('node:path')
 
-const root = path.resolve(__dirname, '..')
-const read = (relativePath) => fs.readFileSync(path.join(root, relativePath), 'utf8')
+const siteRoot = path.resolve(__dirname, '..')
+const repoRoot = path.resolve(siteRoot, '..')
+
+/**
+ * 解析仓库内文件的绝对路径。
+ * docs/ 位于仓库根目录，站点源码位于 website/。
+ */
+const resolveRepoPath = (relativePath) =>
+    path.join(relativePath.startsWith('docs/') ? repoRoot : siteRoot, relativePath)
+
+const read = (relativePath) => fs.readFileSync(resolveRepoPath(relativePath), 'utf8')
 const readJson = (relativePath) => JSON.parse(read(relativePath))
 
 const documentationPages = fs
-    .readdirSync(path.join(root, 'docs'), { withFileTypes: true })
+    .readdirSync(path.join(repoRoot, 'docs'), { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && entry.name !== 'superpowers')
     .flatMap((entry) =>
         fs
-            .readdirSync(path.join(root, 'docs', entry.name))
+            .readdirSync(path.join(repoRoot, 'docs', entry.name))
             .filter((file) => file.endsWith('.mdx'))
             .map((file) => `docs/${entry.name}/${file}`)
     )
@@ -103,7 +112,7 @@ describe('documentation template content', () => {
 
     test('bundled component examples pair source code with a live result', () => {
         const guidePath = 'docs/writing/mdx-components.mdx'
-        if (!fs.existsSync(path.join(root, guidePath))) return
+        if (!fs.existsSync(resolveRepoPath(guidePath))) return
 
         const guide = read(guidePath)
         const examples = [
@@ -125,7 +134,7 @@ describe('documentation template content', () => {
 
     test('bundled asset examples only render files that exist in public', () => {
         const guidePath = 'docs/writing/assets.mdx'
-        if (!fs.existsSync(path.join(root, guidePath))) return
+        if (!fs.existsSync(resolveRepoPath(guidePath))) return
 
         const guideWithoutCode = read(guidePath).replace(/```[\s\S]*?```/g, '')
         const imagePaths = [...guideWithoutCode.matchAll(/!\[[^\]]*]\((\/[^)]+)\)/g)].map(
@@ -134,7 +143,7 @@ describe('documentation template content', () => {
 
         expect(imagePaths.length).toBeGreaterThan(0)
         for (const imagePath of imagePaths) {
-            expect(fs.existsSync(path.join(root, 'public', imagePath.replace(/^\//, '')))).toBe(
+            expect(fs.existsSync(path.join(siteRoot, 'public', imagePath.replace(/^\//, '')))).toBe(
                 true
             )
         }
@@ -146,6 +155,8 @@ describe('documentation template content', () => {
         expect(app).toContain("withBasePath('/sitemap.xml')")
         expect(app).toContain("withBasePath('/manifest.webmanifest')")
         expect(app).toContain('content={site.theme}')
+        expect(read('pages/_document.tsx')).toContain('lang={site.lang}')
+        expect(readJson('meta/site.json').lang).toEqual(expect.any(String))
         expect(read('src/components/embed.js')).toContain('withBasePathForUrl(src)')
     })
 
@@ -161,7 +172,7 @@ describe('documentation template content', () => {
     })
 
     test('ships a GitHub Pages workflow with build metadata and deployment permissions', () => {
-        const workflow = read('.github/workflows/deploy-pages.yml')
+        const workflow = read('../.github/workflows/deploy-pages.yml')
 
         expect(workflow).toContain('branches: [main]')
         expect(workflow).toContain('workflow_dispatch:')
@@ -171,7 +182,7 @@ describe('documentation template content', () => {
         expect(workflow).toContain('NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}')
         expect(workflow).toContain('SITE_URL: ${{ steps.pages.outputs.base_url }}')
         expect(workflow).toContain('uses: actions/upload-pages-artifact@v4')
-        expect(workflow).toContain('path: ./out')
+        expect(workflow).toContain('path: website/out')
         expect(workflow).toContain('needs: build')
         expect(workflow).toContain('name: github-pages')
         expect(workflow).toContain('uses: actions/deploy-pages@v4')

@@ -1,18 +1,19 @@
 ---
 title: 模板概览
-teaser: 使用可配置的 Next.js、MDX 和 Pagefind 搭建中文文档站
+teaser: 使用可配置的 Next.js、MDX 和 Pagefind 搭建静态文档站
 section: getting-started
 menu:
-  - ['模板能力', 'features']
-  - ['目录结构', 'structure']
-  - ['配置关系', 'configuration']
-  - ['推荐使用流程', 'workflow']
-  - ['下一步', 'next']
+  - ["模板能力", "features"]
+  - ["目录结构", "structure"]
+  - ["配置关系", "configuration"]
+  - ["推荐使用流程", "workflow"]
+  - ["下一步", "next"]
 ---
 
-这是一个可复用的中文静态文档站模板。它适合产品手册、SDK 文档、团队规范等以内容为
+这是一个可复用的静态文档站模板。它适合产品手册、SDK 文档、团队规范等以内容为
 主的站点。复制仓库后，主要通过修改 JSON 配置和 MDX 文档，就能建立自己的文档站，
-不需要先理解全部 Next.js 代码。
+不需要先理解全部 Next.js 代码。页面语言写在 `website/meta/site.json` 的 `lang`
+中，并与正文保持一致。
 
 ## 模板能力 {id="features"}
 
@@ -29,22 +30,23 @@ menu:
 
 ## 目录结构 {id="structure"}
 
-日常使用时，优先关注这些目录：
+日常使用时，优先关注这些目录。文档在仓库根目录，站点代码在 `website/`：
 
 ```text
 .
-├── docs/                 # MDX 文档内容
-│   ├── getting-started/  # 入门
-│   ├── writing/          # 编写
-│   └── publishing/       # 发布
-├── meta/
-│   ├── site.json         # 站点名称、导航、页脚
-│   ├── sidebars.json     # 分区、分组与页面顺序
-│   └── type-annotations.json
-├── pages/
-│   └── index.tsx         # 首页
-├── public/               # 静态资源
-└── src/                  # 站点组件、样式与模板逻辑
+├── docs/                         # MDX 文档内容
+│   ├── getting-started/          # 入门
+│   ├── writing/                  # 编写
+│   └── publishing/               # 发布
+└── website/
+    ├── meta/
+    │   ├── site.json             # 站点名称、导航、页脚
+    │   ├── sidebars.json         # 分区、分组与页面顺序
+    │   └── type-annotations.json
+    ├── pages/
+    │   └── index.tsx             # 首页
+    ├── public/                   # 静态资源
+    └── src/                      # 站点组件、样式与模板逻辑
 ```
 
 通常不需要改动 `src/`。只有在扩展组件或调整样式时才需要进入这里。
@@ -53,11 +55,11 @@ menu:
 
 三个位置共同决定一篇文档如何出现：
 
-| 位置                   | 决定什么                       |
-| ---------------------- | ------------------------------ |
-| `docs/<section>/*.mdx` | 页面内容、标题、摘要和右侧目录 |
-| `meta/site.json`       | 顶部大章节、站点身份和页脚     |
-| `meta/sidebars.json`   | 左侧小章节、分组和“下一篇”顺序 |
+| 位置                         | 决定什么                       |
+| ---------------------------- | ------------------------------ |
+| `docs/<section>/*.mdx`       | 页面内容、标题、摘要和右侧目录 |
+| `website/meta/site.json`     | 顶部大章节、站点身份和页脚     |
+| `website/meta/sidebars.json` | 左侧小章节、分组和“下一篇”顺序 |
 
 `section` 是它们之间的连接键。例如 `docs/writing/assets.mdx` 的 frontmatter 使用
 `section: writing`，`site.json.sections` 和 `sidebars.json` 中也都要存在

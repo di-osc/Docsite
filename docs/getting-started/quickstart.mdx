@@ -14,7 +14,7 @@ menu:
 
 ## 环境要求 {id="requirements"}
 
-- Node.js 24（仓库提供 `.nvmrc`，可用 `nvm use` 切换）
+- Node.js 24（`website/.nvmrc`，进入该目录后可用 `nvm use` 切换）
 - Git
 - npm（随 Node.js 安装）
 
@@ -27,7 +27,7 @@ git --version
 ```
 
 预期 `node --version` 以 `v24.` 开头，其余两个命令能输出版本号。如果没有 `nvm`，
-也可以直接安装与 `.nvmrc` 一致的 Node.js 版本。
+也可以直接安装与 `website/.nvmrc` 一致的 Node.js 版本。
 
 ## 从模板创建仓库 {id="create"}
 
@@ -49,11 +49,12 @@ cd your-docs
 
 ## 在本地启动 {id="local"}
 
-进入仓库后安装依赖并启动开发服务器：
+进入 `website/` 后安装依赖并启动开发服务器：
 
 <Aside title="Example">
 
 ```bash
+cd website
 nvm use
 npm install
 npm run dev

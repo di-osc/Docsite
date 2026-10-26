@@ -3,12 +3,12 @@ title: 站点配置
 teaser: 用相互匹配的配置和页面建立 Acme SDK 文档结构
 section: getting-started
 menu:
-  - ['配置文件', 'locations']
-  - ['字段参考', 'fields']
-  - ['配置关系', 'relationships']
-  - ['完整配置示例', 'example']
-  - ['创建入口页面', 'documents']
-  - ['验证结果', 'verify']
+  - ["配置文件", "locations"]
+  - ["字段参考", "fields"]
+  - ["配置关系", "relationships"]
+  - ["完整配置示例", "example"]
+  - ["创建入口页面", "documents"]
+  - ["验证结果", "verify"]
 ---
 
 上一页已经启动模板。本页以 “Acme SDK” 为例，在保留模板使用手册的同时新增“产品指
@@ -35,18 +35,19 @@ manifest 则放到下一页 [外观定制](/getting-started/appearance)。
 
 `meta/site.json` 的字段及实际用途如下：
 
-| 字段          | 作用                                 | 示例                     |
-| ------------- | ------------------------------------ | ------------------------ |
-| `title`       | 浏览器标题、站点名称和页面元信息     | `"Acme SDK"`             |
-| `description` | SEO 与分享摘要                       | `"Acme SDK 中文文档"`    |
-| `slogan`      | 首页浏览器标题中的短标语             | `"Build with Acme"`      |
-| `company`     | 左上角和页脚中的组织名称             | `"Acme"`                 |
-| `companyUrl`  | 页脚组织链接以及外部链接识别         | `"https://acme.example"` |
-| `repo`        | 源码链接使用的 GitHub `owner/repo`   | `"acme/sdk-docs"`        |
-| `theme`       | 浏览器 UI 的十六进制主题色           | `"#0a8f6a"`              |
-| `sections`    | 大章节 id、标题和页面主题名称        | 见完整示例               |
-| `navigation`  | 右上角链接，可以是站内章节或外部页面 | 见完整示例               |
-| `footer`      | 页脚链接分组                         | 见完整示例               |
+| 字段          | 作用                                    | 示例                       |
+| ------------- | --------------------------------------- | -------------------------- |
+| `title`       | 浏览器标题、站点名称和页面元信息        | `"Acme SDK"`               |
+| `lang`        | HTML 语言，按正文填写，如 `en`、`zh-CN` | `"en"`                     |
+| `description` | SEO 与分享摘要                          | `"Acme SDK documentation"` |
+| `slogan`      | 首页浏览器标题中的短标语                | `"Build with Acme"`        |
+| `company`     | 左上角和页脚中的组织名称                | `"Acme"`                   |
+| `companyUrl`  | 页脚组织链接以及外部链接识别            | `"https://acme.example"`   |
+| `repo`        | 源码链接使用的 GitHub `owner/repo`      | `"acme/sdk-docs"`          |
+| `theme`       | 浏览器 UI 的十六进制主题色              | `"#0a8f6a"`                |
+| `sections`    | 大章节 id、标题和页面主题名称           | 见完整示例                 |
+| `navigation`  | 右上角链接，可以是站内章节或外部页面    | 见完整示例                 |
+| `footer`      | 页脚链接分组                            | 见完整示例                 |
 
 `sections[].theme` 与根级 `theme` 含义不同：
 
@@ -128,7 +129,7 @@ title: 指南概览
 teaser: 从安装到第一个 Acme SDK 请求
 section: guide
 menu:
-  - ['下一步', 'next']
+  - ["下一步", "next"]
 ---
 
 这里介绍指南覆盖的内容和适用读者。
@@ -147,7 +148,7 @@ menu:
 
 ## 验证结果 {id="verify"}
 
-在仓库根目录运行：
+在 `website/` 目录运行：
 
 ```bash
 npm test -- --runInBand

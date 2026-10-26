@@ -50,11 +50,17 @@ type ParsedUrlQuery = {
     listPathPage: Array<string>
 }
 
+/**
+ * 返回仓库根目录下的文档目录。
+ * 文档与 website 应用同级；Next 构建时工作目录是 website，所以向上一级解析。
+ */
+const getDocsDirectory = (): string => path.resolve(process.cwd(), '..', 'docs')
+
 export const getStaticPaths: GetStaticPaths<ParsedUrlQuery> = async () => {
     // This function needs to be defined inside `getStaticPath` to be executed in executed in the correct context
     const loadFolder = (pathBase: Array<string> = []): Array<{ params: ParsedUrlQuery }> =>
         fs
-            .readdirSync(path.join('docs', ...pathBase), { withFileTypes: true })
+            .readdirSync(path.join(getDocsDirectory(), ...pathBase), { withFileTypes: true })
             .flatMap((dirent: fs.Dirent) => {
                 if (dirent.isDirectory()) {
                     return loadFolder([...pathBase, dirent.name])
@@ -87,7 +93,8 @@ export const getStaticProps: GetStaticProps<PropsPage, ParsedUrlQuery> = async (
         return { notFound: true }
     }
 
-    const listPathFile = ['docs', ...args.params.listPathPage]
+    // 页面 URL 对应仓库根目录 docs/ 中的 MDX，而不是 website 内部路径
+    const listPathFile = [getDocsDirectory(), ...args.params.listPathPage]
     const isIndex = fs.existsSync(getPathFileWithExtension(listPathFile)) !== true
     const listPathFileWithIndex = isIndex ? [...listPathFile, 'index'] : listPathFile
     const pathFileWithIndexAndExtension = getPathFileWithExtension(listPathFileWithIndex)

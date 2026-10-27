@@ -2,14 +2,7 @@ import fs from 'fs'
 import path from 'path'
 
 import sidebars from '../meta/sidebars.json'
-import {
-    localeIds,
-    sectionsById,
-    stripLocale,
-    swapLocale,
-    withLocale,
-    localeConfig,
-} from './locales'
+import { localeIds, stripLocale, swapLocale, withLocale, localeConfig } from './locales'
 
 /**
  * 返回仓库根目录下的文档目录。
@@ -86,23 +79,36 @@ function readPageTitle(file) {
     return title.replace(/^["']|["']$/g, '')
 }
 
+function groupLabel(label, locale, section, index) {
+    const raw = typeof label === 'string' ? label : label?.[locale]
+    const value = typeof raw === 'string' ? raw.trim() : ''
+
+    if (!value) {
+        throw new Error(
+            `meta/sidebars.json: section "${section}", group ${
+                index + 1
+            }: label for "${locale}" must be a non-empty string`
+        )
+    }
+
+    return value
+}
+
 /**
  * 按当前语言生成侧边栏。
- * 分组标题来自该语言的 sections[].title。
+ * 分组标题来自各组的 label，可用字符串或按语言配置的对象。
  * 页面名称来自该语言 MDX 的 title。没有译文的页面不放进这一语言。
  * url 一律加上当前语言。
  * @param {string} locale
  * @returns {Array<{section: string, items: Array<{label: string, items: Array<{text: string, url: string}>}>}>}
  */
 export function sidebarForLocale(locale) {
-    const sections = sectionsById(locale)
-
     return sidebars
         .map((sidebar) => ({
             section: sidebar.section,
             items: sidebar.items
-                .map((group) => ({
-                    label: sections[sidebar.section]?.title || group.label,
+                .map((group, index) => ({
+                    label: groupLabel(group.label, locale, sidebar.section, index),
                     items: group.items.flatMap((item) => {
                         const file = resolvePageFile(locale, item.url)
 

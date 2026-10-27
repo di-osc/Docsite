@@ -49,7 +49,7 @@ menu:
 
 ```json
 {
-  "label": "入门",
+  "label": { "zh-CN": "入门", "en": "Getting started" },
   "items": [
     { "text": "模板概览", "url": "/getting-started" },
     { "text": "快速开始", "url": "/getting-started/quickstart" },
@@ -58,10 +58,12 @@ menu:
 }
 ```
 
-`text` 是左侧显示文字。`url` 不写语言，所有语言共用这一份；打开中文页时，
-`/getting-started/hello` 会变成 `/zh-CN/getting-started/hello`。数组顺序就是左侧
-顺序，也是页底“下一篇”的阅读顺序。页面名称实际取该语言 MDX 的 `title`。这一语言
-还没写的页面不会出现在它的侧边栏里。
+`label` 是这一组的名称。写成字符串时，所有语言共用；写成对象时，每种语言各写一个
+名称，以后增加语言就补一个键。同一章节可以有多个分组。对象里缺少当前语言的名称时，
+构建会报告配置错误。`text` 是页面名称的备用值。`url` 不写语言，所有语言共用这一份；
+打开中文页时，`/getting-started/hello` 会变成 `/zh-CN/getting-started/hello`。数组
+顺序就是左侧顺序，也是页底“下一篇”的阅读顺序。页面名称实际取该语言 MDX 的
+`title`。这一语言还没写的页面不会出现在它的侧边栏里。
 
 保存后刷新。左侧“入门”里应依次出现“模板概览”“快速开始”“你好”，快速开始页底的
 “下一篇”应指向你好。

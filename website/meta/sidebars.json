@@ -3,7 +3,7 @@
         "section": "getting-started",
         "items": [
             {
-                "label": "入门",
+                "label": {"zh-CN": "入门", "en": "Getting started"},
                 "items": [
                     { "text": "模板概览", "url": "/getting-started" },
                     { "text": "快速开始", "url": "/getting-started/quickstart" }
@@ -15,7 +15,7 @@
         "section": "writing",
         "items": [
             {
-                "label": "编写文档",
+                "label": {"zh-CN": "编写", "en": "Writing"},
                 "items": [
                     { "text": "添加与组织文档", "url": "/writing" },
                     { "text": "MDX 组件", "url": "/writing/mdx-components" },
@@ -30,7 +30,7 @@
         "section": "publishing",
         "items": [
             {
-                "label": "发布站点",
+                "label": {"zh-CN": "发布", "en": "Publishing"},
                 "items": [
                     { "text": "本地搜索", "url": "/publishing" },
                     {

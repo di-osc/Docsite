@@ -102,10 +102,12 @@ A new language does not get its own copy of the sidebar. Every language shares
    public URL is `/ja/getting-started`.
 4. In-site URLs in `navigation` and `footer` include this language's prefix.
    Do not add a prefix to `url` in `sidebars.json`.
+5. Add the new language's name to each localized group `label` object. Shared
+   string labels do not need changes.
 
 The sidebar label is that language's MDX `title`. A page that has not been
-written is omitted from that language's sidebar. The group title is that
-language's `sections[].title`. The header switcher opens the translation when
+written is omitted from that language's sidebar. Each group's title comes from
+its own `label` for that language. The header switcher opens the translation when
 it exists, and the first chapter of that language when it does not.
 
 The Chinese and English handbooks already follow the shared sidebar. To add
@@ -160,17 +162,22 @@ Finally append a sidebar object to the outer array in
   "section": "guide",
   "items": [
     {
-      "label": "Start",
+      "label": { "zh-CN": "开始使用", "en": "Getting started" },
       "items": [{ "text": "Guide overview", "url": "/guide" }]
     }
   ]
 }
 ```
 
-The rendered group title comes from `sections[].title`, here "Product guide".
-`label` is only a placeholder in the config. Remember the comma after the
-previous array element. The existing handbook stays available, the header
-gains Product guide, and the page does not exist yet.
+The `items` array can contain multiple groups. Each group has its own `label`;
+no `id` is required. This group displays “开始使用” in Chinese and “Getting started”
+in English. `sections[].title` continues to name the whole chapter. A string
+`label` is shared across languages. An object keyed by language must name the
+current language, and a new language adds another key. A missing name produces
+a configuration error.
+
+Remember the comma after the previous array element. The existing handbook
+stays available, the header gains Product guide, and the page does not exist yet.
 
 ## Create the entry page {id="documents"}
 
@@ -228,7 +235,7 @@ overview. The `url` still has no language:
 
 ```json
 {
-  "label": "Start",
+  "label": { "zh-CN": "开始使用", "en": "Getting started" },
   "items": [
     { "text": "Guide overview", "url": "/guide" },
     { "text": "Install", "url": "/guide/installation" }

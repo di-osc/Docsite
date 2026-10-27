@@ -52,7 +52,7 @@ Writing and Publishing from the sidebar:
 
 ```json
 {
-  "label": "Getting started",
+  "label": { "zh-CN": "入门", "en": "Getting started" },
   "items": [
     { "text": "Template overview", "url": "/getting-started" },
     { "text": "Quick start", "url": "/getting-started/quickstart" },
@@ -61,11 +61,15 @@ Writing and Publishing from the sidebar:
 }
 ```
 
-`text` is the fallback label. `url` has no language, because every language
-shares this file. On an English page, `/getting-started/hello` opens
-`/en/getting-started/hello`. Array order is the sidebar order and the "Read
-next" order. The visible name is that language's MDX `title`. A page that does
-not exist in a language is left out of that language's sidebar.
+`label` is the group name. A string is shared by every language. An object
+gives each language its own name, and a new language adds another key. A
+chapter can contain several groups. If the object has no name for the current
+language, the build reports a configuration error. `text` is the fallback page
+label. `url` has no language, because every language shares this file. On an
+English page, `/getting-started/hello` opens `/en/getting-started/hello`.
+Array order is the sidebar order and the "Read next" order. The visible name
+is that language's MDX `title`. A page that does not exist in a language is
+left out of that language's sidebar.
 
 Save and refresh. Getting started should list Template overview, Quick start,
 then Hello. Quick start's "Read next" should point at Hello.

@@ -92,9 +92,10 @@ menu:
    `docs/ja/getting-started/index.mdx`，公开地址是 `/ja/getting-started`。
 4. `navigation` 和 `footer` 里的站内地址要带上这一语言的前缀。`sidebars.json` 的
    `url` 不要加前缀。
+5. 为每个按语言配置的 `label` 对象补上新语言的名称；字符串形式的共用名称无需修改。
 
 侧边栏上的页面名称用该语言 MDX 的 `title`。还没写的页面不会出现在这一语言的侧边栏
-里。分组标题用该语言 `sections[].title`。页头切换在有译文时打开同一页，没有译文时
+里。分组标题读取每组 `label` 中对应语言的名称。页头切换在有译文时打开同一页，没有译文时
 进入这一语言的第一章。
 
 中文和英文手册已经按同一份侧边栏写齐。再加一种语言时，重复上面的步骤，并补上该语言
@@ -146,16 +147,20 @@ meta/sidebars.json
   "section": "guide",
   "items": [
     {
-      "label": "开始使用",
+      "label": { "zh-CN": "开始使用", "en": "Getting started" },
       "items": [{ "text": "指南概览", "url": "/guide" }]
     }
   ]
 }
 ```
 
-分组标题渲染时使用 `sections[].title`，也就是“产品指南”。`label` 只是配置里的
-占位。注意前一个数组元素后要有逗号。完成后，原有手册仍可访问，右上角会多出“产品
-指南”，但页面尚未创建。
+`items` 数组可以包含多个分组，每组使用自己的 `label`，不需要增加 `id`。
+上面的分组在中文显示“开始使用”，英文显示“Getting started”；`sections[].title`
+仍表示整章名称。字符串 `label` 表示所有语言共用名称；按语言配置的对象缺少当前语言
+名称时会报告配置错误。
+
+注意前一个数组元素后要有逗号。完成后，原有手册仍可访问，右上角会多出“产品指南”，
+但页面尚未创建。
 
 ## 创建入口页面 {id="documents"}
 
@@ -210,7 +215,7 @@ npm install @acme/sdk
 
 ```json
 {
-  "label": "开始使用",
+  "label": { "zh-CN": "开始使用", "en": "Getting started" },
   "items": [
     { "text": "指南概览", "url": "/guide" },
     { "text": "安装", "url": "/guide/installation" }
